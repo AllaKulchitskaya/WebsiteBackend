@@ -10,12 +10,16 @@ import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 import team.skyprojava.websitebackend.controller.AdsController;
 import team.skyprojava.websitebackend.dto.AdsDto;
 import team.skyprojava.websitebackend.dto.CreateAdsDto;
+import team.skyprojava.websitebackend.dto.FullAdsDto;
 import team.skyprojava.websitebackend.dto.ResponseWrapperAdsDto;
 import team.skyprojava.websitebackend.entity.Ads;
 import team.skyprojava.websitebackend.entity.User;
@@ -31,11 +35,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(value = "http://localhost:3000")
+/**
+ * Реализация сервиса для работы с объявлениями
+ */
+
+
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/ads")
-@Tag(name = "Объявления", description = "AdsController")
+@Service
 public class AdsServiceImpl implements AdsService {
 
     Logger logger = LoggerFactory.getLogger(AdsController.class);
@@ -43,14 +49,11 @@ public class AdsServiceImpl implements AdsService {
     private final AdsRepository adsRepository;
     private final AdsMapper adsMapper;
     private final UserRepository userRepository;
-    @Override
-    public Ads getAds(long id) {
-        return null;
-    }
 
 
     @Override
     public ResponseWrapperAdsDto getAllAds() {
+        logger.info("Service for get all ads");
         List<Ads> adsList = adsRepository.findAll();
         if (!adsList.isEmpty()) {
             List<AdsDto> adsDtoList = new ArrayList<>(adsList.size());
@@ -76,7 +79,52 @@ public class AdsServiceImpl implements AdsService {
         return adsMapper.toAdsDto(adsRepository.save(ads));
     }
 
+    @Override
+    public void removeAds(int id) throws IOException {
+        logger.info("Was invoked method for delete ad by id");
+        Ads ads = adsRepository.findById(id)
+                .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
+        logger.warn("Ad by id {} not found", id);
+        adsRepository.delete(ads);
+    }
 
+    @Override
+    public AdsDto updateAds(int id, CreateAdsDto updateAdsDto) {
+        logger.info("Was invoked method for update ad by id");
+        Ads updatedAds = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
+        logger.warn("Ad by id {} not found", id);
+        updatedAds.setTitle(updateAdsDto.getTitle());
+        updatedAds.setDescription(updateAdsDto.getDescription());
+        updatedAds.setPrice(updateAdsDto.getPrice());
+        adsRepository.save(updatedAds);
+        logger.info("ad updated");
+        return adsMapper.toAdsDto(updatedAds);
+    }
+
+    @Override
+    public FullAdsDto getFullAdsDto(int id) {
+        logger.info("Was invoked method for get full ad dto");
+        return adsMapper.toDto(adsRepository.findById(id).orElseThrow(() -> new NotFoundException("Объявление с id " + id + " не найдено!")));
+    }
+
+    @Override
+    public ResponseWrapperAdsDto getAdsMe(Authentication authentication) {
+        logger.info("Service for get ads me");
+        User user = userRepository. findByEmail(authentication.getName()).
+                orElseThrow(() -> new UserNotFoundException("User is not found"));
+        List<Ads> adsList = adsRepository.findAllByAuthorId(user.getId());
+        if (!adsList.isEmpty()) {
+            List<AdsDto> adsDtoList = new ArrayList<>(adsList.size());
+            for (Ads a : adsList) {
+                adsDtoList.add(adsMapper.toAdsDto(a));
+            }
+            ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
+            result.setCount(adsList.size());
+            result.setResults(adsDtoList);
+            return result;
+        }
+        throw new AdsNotFoundException("Ads are not found");
+    }
 
 
 }
