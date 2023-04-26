@@ -11,11 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 import team.skyprojava.websitebackend.dto.NewPasswordDto;
+import team.skyprojava.websitebackend.dto.Role;
 import team.skyprojava.websitebackend.dto.UserDto;
 import team.skyprojava.websitebackend.mapper.UserMapper;
 import team.skyprojava.websitebackend.service.UserService;
@@ -170,6 +172,13 @@ public class UserController {
     public ResponseEntity<Void> updateUserImage(@RequestBody MultipartFile image) {
         System.out.println("Проверка_me_image");
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("{id}/updateRole")
+    public ResponseEntity<UserDto> updateRole(@PathVariable("id") long id, Role role) {
+        logger.info("Request for update user role");
+        return ResponseEntity.ok(userService.updateRole(id, role));
     }
 
 
