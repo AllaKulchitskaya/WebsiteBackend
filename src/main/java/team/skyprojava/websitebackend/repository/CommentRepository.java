@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface AdsCommentRepository extends JpaRepository<Comment, Integer> {
+public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     List<Comment> findAllByAdsId(Integer adsId);
 

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class AdsComment {
+public class Comment {
     /**
      * "ID/ id комментария" field
      */
