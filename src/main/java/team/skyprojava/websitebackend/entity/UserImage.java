@@ -1,17 +1,12 @@
 package team.skyprojava.websitebackend.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "user_image")
-@Getter
-@Setter
-@RequiredArgsConstructor
+@Data
 public class UserImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

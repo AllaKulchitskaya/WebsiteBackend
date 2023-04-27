@@ -1,9 +1,7 @@
 package team.skyprojava.websitebackend.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import team.skyprojava.websitebackend.dto.CommentDto;
 import team.skyprojava.websitebackend.dto.ResponseWrapperCommentDto;
@@ -16,10 +14,6 @@ import team.skyprojava.websitebackend.service.CommentService;
 public class CommentController {
     private final CommentService commentService;
 
-    public CommentController() {
-        this(null);
-    }
-
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
@@ -31,9 +25,8 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/comments")
-    public ResponseEntity<CommentDto> addComment(@PathVariable int id, @RequestBody CommentDto commentDto,
-                                                 Authentication authentication) {
-        CommentDto newCommentDto = commentService.addComment(id, commentDto, authentication);
+    public ResponseEntity<CommentDto> addComment(@PathVariable int id, @RequestBody CommentDto commentDto) {
+        CommentDto newCommentDto = commentService.addComment(id, commentDto);
         return ResponseEntity.ok(newCommentDto);
     }
 

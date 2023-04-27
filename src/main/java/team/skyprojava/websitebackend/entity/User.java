@@ -1,18 +1,13 @@
 package team.skyprojava.websitebackend.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import team.skyprojava.websitebackend.dto.Role;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
-@RequiredArgsConstructor
+@Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,16 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import team.skyprojava.websitebackend.dto.*;
 import team.skyprojava.websitebackend.entity.Ads;
-import team.skyprojava.websitebackend.exception.AdsNotFoundException;
 import team.skyprojava.websitebackend.service.AdsService;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -68,9 +64,9 @@ public class AdsController {
             tags = "Ads"
     )
     @PostMapping
-    public ResponseEntity<AdsDto> addAds(@RequestBody CreateAdsDto createAdsDto, Authentication authentication) {
+    public ResponseEntity<AdsDto> addAds(@RequestBody CreateAdsDto createAdsDto, @RequestBody MultipartFile image) {
         logger.info("Request for add new ad");
-        return ResponseEntity.ok(adsService.createAds(createAdsDto, authentication));
+        return ResponseEntity.ok(adsService.createAds(createAdsDto, image));
     }
 
     @Operation(summary = "Поиск объявления по id",
@@ -87,9 +83,9 @@ public class AdsController {
             tags = "Ads"
     )
     @GetMapping("/{id}")
-    public FullAdsDto getAds(@PathVariable int id) {
+    public ResponseEntity<FullAdsDto> getAds(@PathVariable int id) {
         logger.info("Request for get ad by id");
-        return adsService.getFullAdsDto(id);
+        return ResponseEntity.ok(adsService.getFullAdsDto(id));
     }
 
     @SneakyThrows
@@ -108,13 +104,10 @@ public class AdsController {
             tags = "Ads"
     )
     @DeleteMapping("/{id}")
-    public void removeAds(@PathVariable int id) throws AdsNotFoundException {
+    public ResponseEntity<Void> removeAds(@PathVariable int id) {
         logger.info("Request for delete ad by id");
-        try {
-            adsService.removeAds(id);
-        } catch (AdsNotFoundException e) {
-            throw new AdsNotFoundException("Ad not found with id ");
-        }
+        adsService.removeAds(id);
+        return ResponseEntity.ok().build();
     }
 
     @SneakyThrows
@@ -137,11 +130,6 @@ public class AdsController {
                                             @RequestBody CreateAdsDto updatedAdsDto) {
         logger.info("Request for update ad by id");
         AdsDto updateAdsDto = adsService.updateAds(id, updatedAdsDto);
-        try{
-            adsService.updateAds(id, updatedAdsDto);
-        } catch (AdsNotFoundException e){
-            throw new AdsNotFoundException("Ad not found with id ");
-        }
         return ResponseEntity.ok(updateAdsDto);
     }
 
@@ -159,15 +147,15 @@ public class AdsController {
             tags = "Ads"
     )
     @GetMapping("/me")
-    public ResponseEntity<ResponseWrapperAdsDto> getAdsMe(Authentication authentication) {
+    public ResponseEntity<ResponseWrapperAdsDto> getAdsMe() {
         logger.info("Request for found ads me");
-        ResponseWrapperAdsDto responseWrapperAdsDto = adsService.getAdsMe(authentication);
+        ResponseWrapperAdsDto responseWrapperAdsDto = adsService.getAdsMe();
         return ResponseEntity.ok(responseWrapperAdsDto);
     }
 
-//    @PatchMapping("/{id}/image")
-//    public ResponseEntity<byte[]> updateAdsImage(@PathVariable int id, @RequestBody MultipartFile image) {
-//        System.out.println("Проверка отклика image_id");
-//        return ResponseEntity.ok().build();
-//    }
+    @PatchMapping("/{id}/image")
+    public ResponseEntity<byte[]> updateAdsImage(@PathVariable int id, @RequestBody MultipartFile image) {
+        System.out.println("Проверка отклика image_id");
+        return ResponseEntity.ok().build();
+    }
 }

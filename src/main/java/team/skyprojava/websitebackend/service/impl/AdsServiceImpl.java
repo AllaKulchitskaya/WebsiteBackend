@@ -1,20 +1,11 @@
 package team.skyprojava.websitebackend.service.impl;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 import team.skyprojava.websitebackend.controller.AdsController;
 import team.skyprojava.websitebackend.dto.AdsDto;
@@ -33,7 +24,6 @@ import team.skyprojava.websitebackend.service.AdsService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Реализация сервиса для работы с объявлениями
@@ -45,7 +35,6 @@ import java.util.stream.Collectors;
 public class AdsServiceImpl implements AdsService {
 
     Logger logger = LoggerFactory.getLogger(AdsController.class);
-    private final AdsService adsService;
     private final AdsRepository adsRepository;
     private final AdsMapper adsMapper;
     private final UserRepository userRepository;
@@ -69,18 +58,19 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public AdsDto createAds(CreateAdsDto createAdsDto, Authentication authentication) throws IOException {
+    public AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile image) throws IOException {
         logger.info("Was invoked method for create ad");
-        User user = userRepository.findByEmail(authentication.getName()).
+        User user = userRepository.findByEmail("user@mail.ru").
                 orElseThrow(() -> new UserNotFoundException("User is not found"));
         Ads ads = adsMapper.toEntity(createAdsDto);
         ads.setAuthor(user);
+        //ads.setAdsImage(image);
         logger.info("ad created");
         return adsMapper.toAdsDto(adsRepository.save(ads));
     }
 
     @Override
-    public void removeAds(int id) throws IOException {
+    public void removeAds(int id) {
         logger.info("Was invoked method for delete ad by id");
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
@@ -91,7 +81,8 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdsDto updateAds(int id, CreateAdsDto updateAdsDto) {
         logger.info("Was invoked method for update ad by id");
-        Ads updatedAds = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
+        Ads updatedAds = adsRepository.findById(id)
+                .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
         logger.warn("Ad by id {} not found", id);
         updatedAds.setTitle(updateAdsDto.getTitle());
         updatedAds.setDescription(updateAdsDto.getDescription());
@@ -104,13 +95,15 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public FullAdsDto getFullAdsDto(int id) {
         logger.info("Was invoked method for get full ad dto");
-        return adsMapper.toDto(adsRepository.findById(id).orElseThrow(() -> new NotFoundException("Объявление с id " + id + " не найдено!")));
+        Ads ads = adsRepository.findById(id)
+                .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
+        return adsMapper.toDto(ads);
     }
 
     @Override
-    public ResponseWrapperAdsDto getAdsMe(Authentication authentication) {
+    public ResponseWrapperAdsDto getAdsMe() {
         logger.info("Service for get ads me");
-        User user = userRepository. findByEmail(authentication.getName()).
+        User user = userRepository. findByEmail("user@mail.ru").
                 orElseThrow(() -> new UserNotFoundException("User is not found"));
         List<Ads> adsList = adsRepository.findAllByAuthorId(user.getId());
         if (!adsList.isEmpty()) {
@@ -124,6 +117,12 @@ public class AdsServiceImpl implements AdsService {
             return result;
         }
         throw new AdsNotFoundException("Ads are not found");
+    }
+
+    @Override
+    public byte[] updateAdsImage(int id, MultipartFile image) {
+        //тело метода
+        return null;
     }
 
 

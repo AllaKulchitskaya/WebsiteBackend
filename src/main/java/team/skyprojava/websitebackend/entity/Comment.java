@@ -6,38 +6,24 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * Class of AdsComment (advertisement comment/комментарий в объявлениях).
+ * Class of Comment (advertisement comment/комментарий в объявлениях).
  */
 @Entity
-@Table(name = "ads_comment")
-@NoArgsConstructor
-@EqualsAndHashCode
-@AllArgsConstructor
-@Getter
-@Setter
+@Table(name = "comment")
+@Data
 public class Comment {
-    /**
-     * "ID/ id комментария" field
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    /**
-     * "users/пользователь" field
-     */
-    @ManyToOne
+    @Column(name = "comment_id")
+    private Integer id;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private User author;
-    /**
-     * "createdAt/время создания комментария" field
-     */
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-    /**
-     * "text/текст комментария" field
-     */
+    @Column(name = "text")
     private String text;
-    /**
-     * "ads/объявление" field
-     */
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ads_id")
     private Ads ads;
 }

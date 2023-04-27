@@ -35,46 +35,6 @@ public class UserController {
 
     private final UserService userService;
 
-    private final UserMapper mapper;
-
-    @Operation(summary = "Создание пользователя",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Созданный пользователь",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = UserDto.class)
-                            )
-                    )
-            },
-            tags = "Users"
-    )
-
-    @PostMapping
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto createUserDto) {
-        logger.info("Request for add user");
-        return ResponseEntity.ok(userService.User(createUserDto));
-    }
-
-    @Operation(summary = "Просмотр всех пользователей",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Пользователи",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = UserDto.class)
-                            )
-                    )
-            },
-            tags = "Users"
-    )
-    @GetMapping("/me")
-    public ResponseEntity<UserDto> getUserMe(Authentication authentication) {
-        logger.info("Request for get users");
-        return ResponseEntity.ok(userService.getUserMe(authentication));
-    }
 
     @Operation(summary = "Изменение пароля",
             responses = {
@@ -91,10 +51,10 @@ public class UserController {
     )
 
     @PostMapping("/set_password")
-    public ResponseEntity<NewPasswordDto> setPassword(@Valid @RequestBody NewPasswordDto newPasswordDto) {
+    public ResponseEntity<Void> setPassword(@RequestBody NewPasswordDto newPasswordDto) {
         logger.info("Request for create new password");
         userService.newPassword(newPasswordDto.getNewPassword(), newPasswordDto.getCurrentPassword());
-        return ResponseEntity.ok(newPasswordDto);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Изменение информации о пользователе",
@@ -111,16 +71,16 @@ public class UserController {
             tags = "Users"
     )
     @PatchMapping("/me")
-    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
         logger.info("Request for update user");
         return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
-    @Operation(summary = "Получение всех пользователей",
+    @Operation(summary = "Получение информации об авторизованном пользователе",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Все пользователи",
+                            description = "Авторизованный пользователь",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = UserDto.class)
@@ -130,40 +90,11 @@ public class UserController {
             },
             tags = "Users"
     )
-    @GetMapping("/me")
-    public ResponseEntity<UserDto> getUsers() {
-        logger.info("Request for get users");
-        return ResponseEntity.ok(new UserDto());
-    }
-
-    @Operation(summary = "Поиск пользователя по id",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Найденный пользователь",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = UserDto.class)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Not Found")
-            },
-            tags = "Users"
-    )
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable int id) {
-        logger.info("Request for get user by id");
-        try {
-            return ResponseEntity.ok(userService.getUserById(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
     @GetMapping("/me")
     public ResponseEntity<UserDto> getUser() {
-        System.out.println("Проверка get_me");
-        return ResponseEntity.ok(new UserDto());
+        logger.info("Request for get users");
+        UserDto userDto = userService.getUserMe();
+        return ResponseEntity.ok(userDto);
     }
 
 
@@ -172,12 +103,6 @@ public class UserController {
     public ResponseEntity<Void> updateUserImage(@RequestBody MultipartFile image) {
         System.out.println("Проверка_me_image");
         return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("{id}/updateRole")
-    public ResponseEntity<UserDto> updateRole(@PathVariable("id") int id, Role role) {
-        logger.info("Request for update user role");
-        return ResponseEntity.ok(userService.updateRole(id, role));
     }
 
 
