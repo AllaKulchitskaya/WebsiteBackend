@@ -23,6 +23,6 @@ public interface CommentMapper{
     @Mapping(target = "authorFirstName", source = "author.firstName")
     @Mapping(target = "authorImage", expression = "java(\"/users/\" + comment.getAuthor().getId() + \"/image/\")")
     @Mapping(target = "pk", source = "id")
-    @Mapping(target = "createdAt", source = "comment.createdAt", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(target = "createdAt", ignore = true)
     CommentDto toDto(Comment comment);
 }
