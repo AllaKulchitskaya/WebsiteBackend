@@ -52,14 +52,12 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(userRepository.save(createdUser));
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<UserDto> getUsers() {
         logger.info("Получение всех пользователей");
         return (List<UserDto>) userMapper.toDto((User) userRepository.findAll());
     }
 
-    @Transactional(readOnly = true)
     @Override
     public UserDto getUserMe(Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
@@ -69,8 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto updatedUserDto) {
         logger.info("Was invoked method for update user");
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName()).orElseThrow();
+        User user = userRepository.findByEmail("user@mail.ru").orElseThrow();
         user.setFirstName(updatedUserDto.getFirstName());
         user.setLastName(updatedUserDto.getLastName());
         user.setPhone(updatedUserDto.getPhone());
@@ -81,15 +78,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(int id) {
         logger.info("Получение пользователей по id");
-        return userMapper.toDto(userRepository.findById((long) id)
+        return userMapper.toDto(userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден!")));
     }
 
     @Override
     public void newPassword(String newPassword, String currentPassword) {
         logger.info("Was invoked method for create new password");
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName()).orElseThrow();
+        User user = userRepository.findByEmail("user@mail.ru").orElseThrow();
         if (passwordEncoder.matches(currentPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
@@ -98,7 +94,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateRole(long id, Role role) {
+    public UserDto updateRole(int id, Role role) {
         logger.info("Was invoked method for update user role");
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден!"));
         user.setRole(role);

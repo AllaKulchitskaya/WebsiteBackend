@@ -5,24 +5,39 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Class of AdsComment (advertisement comment/комментарий в объявлениях).
+ */
 @Entity
-@Table(name = "comment")
+@Table(name = "ads_comment")
+@NoArgsConstructor
+@EqualsAndHashCode
+@AllArgsConstructor
 @Getter
 @Setter
-@RequiredArgsConstructor
 public class Comment {
+    /**
+     * "ID/ id комментария" field
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
-    private Integer id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    private long id;
+    /**
+     * "users/пользователь" field
+     */
+    @ManyToOne
     private User author;
-    @Column(name = "created_at")
+    /**
+     * "createdAt/время создания комментария" field
+     */
     private LocalDateTime createdAt;
-    @Column(name = "text")
+    /**
+     * "text/текст комментария" field
+     */
     private String text;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ads_id")
+    /**
+     * "ads/объявление" field
+     */
+    @ManyToOne
     private Ads ads;
 }

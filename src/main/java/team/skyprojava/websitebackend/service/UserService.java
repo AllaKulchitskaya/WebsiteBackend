@@ -53,5 +53,5 @@ public interface UserService {
     void newPassword(String newPassword, String currentPassword);
 
 
-    UserDto updateRole(long id, Role role);
+    UserDto updateRole(int id, Role role);
 }
