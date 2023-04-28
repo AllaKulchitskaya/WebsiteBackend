@@ -33,7 +33,7 @@ import java.util.List;
 @Service
 public class AdsServiceImpl implements AdsService {
 
-    Logger logger = LoggerFactory.getLogger(AdsController.class);
+    private final Logger logger = LoggerFactory.getLogger(AdsServiceImpl.class);
     private final AdsRepository adsRepository;
     private final AdsMapper adsMapper;
     private final UserRepository userRepository;

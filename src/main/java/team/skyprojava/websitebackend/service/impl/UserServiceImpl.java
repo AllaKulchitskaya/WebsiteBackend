@@ -17,7 +17,7 @@ import team.skyprojava.websitebackend.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
 

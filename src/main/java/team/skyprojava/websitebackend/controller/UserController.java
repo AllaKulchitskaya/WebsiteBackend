@@ -1,6 +1,8 @@
 package team.skyprojava.websitebackend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,7 +33,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class UserController {
 
-    Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -99,9 +101,11 @@ public class UserController {
 
 
 
-    @PatchMapping("/me/image")
-    public ResponseEntity<Void> updateUserImage(@RequestBody MultipartFile image) {
-        System.out.println("Проверка_me_image");
+    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> updateUserImage(@Parameter(in = ParameterIn.DEFAULT, description = "Загрузите сюда новое изображение",
+            schema = @Schema()) @RequestPart(value = "image") MultipartFile image) {
+        logger.info("Request for update user image");
+        userService.updateUserImage(image);
         return ResponseEntity.ok().build();
     }
 

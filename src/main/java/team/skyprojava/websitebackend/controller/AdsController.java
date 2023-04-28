@@ -1,6 +1,8 @@
 package team.skyprojava.websitebackend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +29,7 @@ import team.skyprojava.websitebackend.service.AdsService;
 @Tag(name = "Объявления", description = "AdsController")
 public class AdsController {
 
-    Logger logger = LoggerFactory.getLogger(AdsController.class);
+    private final Logger logger = LoggerFactory.getLogger(AdsController.class);
     private final AdsService adsService;
 
     @Operation(summary = "Просмотр всех объявлений",
@@ -63,8 +65,11 @@ public class AdsController {
             },
             tags = "Ads"
     )
-    @PostMapping
-    public ResponseEntity<AdsDto> addAds(@RequestBody CreateAdsDto createAdsDto, @RequestBody MultipartFile image) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AdsDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "Данные нового объявления",
+            required = true, schema = @Schema())
+                                             @RequestPart("properties") CreateAdsDto createAdsDto,
+                                         @RequestPart("image") MultipartFile image) {
         logger.info("Request for add new ad");
         return ResponseEntity.ok(adsService.createAds(createAdsDto, image));
     }
@@ -153,9 +158,11 @@ public class AdsController {
         return ResponseEntity.ok(responseWrapperAdsDto);
     }
 
-    @PatchMapping("/{id}/image")
-    public ResponseEntity<byte[]> updateAdsImage(@PathVariable int id, @RequestBody MultipartFile image) {
-        System.out.println("Проверка отклика image_id");
-        return ResponseEntity.ok().build();
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<byte[]> updateAdsImage(@PathVariable int id, @Parameter(in = ParameterIn.DEFAULT, description = "Загрузите сюда новое изображение",
+            schema = @Schema())
+    @RequestPart(value = "image") MultipartFile image) {
+        logger.info("Request for update ad image by id");
+        return ResponseEntity.ok(adsService.updateAdsImage(id, image));
     }
 }
