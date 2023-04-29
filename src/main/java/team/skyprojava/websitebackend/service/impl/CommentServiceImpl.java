@@ -3,6 +3,7 @@ package team.skyprojava.websitebackend.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 import team.skyprojava.websitebackend.dto.CommentDto;
@@ -49,8 +50,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDto addComment(int id, CommentDto commentDto) {
-        User user = userRepository.findByEmail("user@mail.ru").
+    public CommentDto addComment(int id, CommentDto commentDto, Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName()).
                 orElseThrow(() -> new UserNotFoundException("User is not found"));
         Comment comment = commentMapper.toEntity(commentDto);
         comment.setAuthor(user);
@@ -63,8 +64,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void removeComment(int adId, int commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("Comment is not found"));
+        Comment comment = getCommentById(commentId);
         if (comment.getAds().getId() != adId) {
             throw new NotFoundException("The comment isn't referred to this ads");
         }
@@ -73,14 +73,18 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto updateComment(int adId, int commentId, CommentDto commentDto) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("Comment is not found"));
+        Comment comment = getCommentById(commentId);
         if (comment.getAds().getId() != adId) {
             throw new NotFoundException("The comment isn't referred to this ads");
         }
         comment.setText(commentDto.getText());
         CommentDto newCommentDto = commentMapper.toDto(comment);
         return newCommentDto;
+    }
+
+    public Comment getCommentById(int commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("Comment is not found"));
     }
 
 

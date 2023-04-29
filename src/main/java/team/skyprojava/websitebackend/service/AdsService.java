@@ -1,5 +1,6 @@
 package team.skyprojava.websitebackend.service;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 import team.skyprojava.websitebackend.dto.AdsDto;
 import team.skyprojava.websitebackend.dto.CreateAdsDto;
@@ -17,7 +18,7 @@ public interface AdsService {
 
     ResponseWrapperAdsDto getAllAds();
 
-    AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile image) throws IOException;
+    AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile image, Authentication authentication) throws IOException;
 
     void removeAds(int id) throws IOException;
 
@@ -25,7 +26,7 @@ public interface AdsService {
 
     FullAdsDto getFullAdsDto(int id);
 
-    ResponseWrapperAdsDto getAdsMe();
+    ResponseWrapperAdsDto getAdsMe(Authentication authentication);
     byte[] updateAdsImage(int id, MultipartFile image);
 
 

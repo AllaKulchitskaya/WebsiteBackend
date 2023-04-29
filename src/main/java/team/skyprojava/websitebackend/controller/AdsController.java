@@ -3,6 +3,7 @@ package team.skyprojava.websitebackend.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import team.skyprojava.websitebackend.dto.*;
@@ -66,12 +68,14 @@ public class AdsController {
             tags = "Ads"
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdsDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "Данные нового объявления",
-            required = true, schema = @Schema())
+    public ResponseEntity<AdsDto> addAds(Authentication authentication,
+                                         @Parameter(in = ParameterIn.DEFAULT,
+                                                 description = "Данные нового объявления", required = true,
+                                                 schema = @Schema())
                                              @RequestPart("properties") CreateAdsDto createAdsDto,
                                          @RequestPart("image") MultipartFile image) {
         logger.info("Request for add new ad");
-        return ResponseEntity.ok(adsService.createAds(createAdsDto, image));
+        return ResponseEntity.ok(adsService.createAds(createAdsDto, image, authentication));
     }
 
     @Operation(summary = "Поиск объявления по id",
@@ -152,16 +156,32 @@ public class AdsController {
             tags = "Ads"
     )
     @GetMapping("/me")
-    public ResponseEntity<ResponseWrapperAdsDto> getAdsMe() {
+    public ResponseEntity<ResponseWrapperAdsDto> getAdsMe(Authentication authentication) {
         logger.info("Request for found ads me");
-        ResponseWrapperAdsDto responseWrapperAdsDto = adsService.getAdsMe();
+        ResponseWrapperAdsDto responseWrapperAdsDto = adsService.getAdsMe(authentication);
         return ResponseEntity.ok(responseWrapperAdsDto);
     }
 
+    @SneakyThrows
+    @Operation(summary = "Обновление изображения объявления",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Новое изображение",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                                    schema = @Schema(implementation = Byte[].class)
+                            )
+                    )
+            },
+            tags = "AdsImage"
+    )
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> updateAdsImage(@PathVariable int id, @Parameter(in = ParameterIn.DEFAULT, description = "Загрузите сюда новое изображение",
-            schema = @Schema())
-    @RequestPart(value = "image") MultipartFile image) {
+    public ResponseEntity<byte[]> updateAdsImage(@PathVariable int id,
+                                                 @Parameter(in = ParameterIn.DEFAULT,
+                                                         description = "Загрузите сюда новое изображение",
+                                                         schema = @Schema())
+                                                 @RequestPart(value = "image") MultipartFile image) {
         logger.info("Request for update ad image by id");
         return ResponseEntity.ok(adsService.updateAdsImage(id, image));
     }

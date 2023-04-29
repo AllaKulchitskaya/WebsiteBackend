@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +54,9 @@ public class UserController {
     )
 
     @PostMapping("/set_password")
-    public ResponseEntity<Void> setPassword(@RequestBody NewPasswordDto newPasswordDto) {
+    public ResponseEntity<Void> setPassword(@RequestBody NewPasswordDto newPasswordDto, Authentication authentication) {
         logger.info("Request for create new password");
-        userService.newPassword(newPasswordDto.getNewPassword(), newPasswordDto.getCurrentPassword());
+        userService.newPassword(newPasswordDto.getNewPassword(), newPasswordDto.getCurrentPassword(), authentication);
         return ResponseEntity.ok().build();
     }
 
@@ -73,9 +74,9 @@ public class UserController {
             tags = "Users"
     )
     @PatchMapping("/me")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, Authentication authentication) {
         logger.info("Request for update user");
-        return ResponseEntity.ok(userService.updateUser(userDto));
+        return ResponseEntity.ok(userService.updateUser(userDto, authentication));
     }
 
     @Operation(summary = "Получение информации об авторизованном пользователе",
@@ -93,19 +94,33 @@ public class UserController {
             tags = "Users"
     )
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getUser() {
+    public ResponseEntity<UserDto> getUser(Authentication authentication) {
         logger.info("Request for get users");
-        UserDto userDto = userService.getUserMe();
+        UserDto userDto = userService.getUserMe(authentication);
         return ResponseEntity.ok(userDto);
     }
 
 
 
+    @SneakyThrows
+    @Operation(summary = "Обновление аватара пользователя",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Новое изображение"
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not Found")
+            },
+            tags = "UserImage"
+    )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateUserImage(@Parameter(in = ParameterIn.DEFAULT, description = "Загрузите сюда новое изображение",
-            schema = @Schema()) @RequestPart(value = "image") MultipartFile image) {
+    public ResponseEntity<Void> updateUserImage(Authentication authentication,
+                                                @Parameter(in = ParameterIn.DEFAULT,
+                                                        description = "Загрузите сюда новое изображение",
+                                                        schema = @Schema())
+                                                @RequestPart(value = "image") MultipartFile image) {
         logger.info("Request for update user image");
-        userService.updateUserImage(image);
+        userService.updateUserImage(image, authentication);
         return ResponseEntity.ok().build();
     }
 
