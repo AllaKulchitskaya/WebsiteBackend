@@ -49,12 +49,10 @@ public class AuthController {
     )
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginReqDto req) {
-        if (authService.login(req.getUsername(), req.getPassword())) {
-            System.out.println("Проверка login");
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        logger.info("Request for authorization user");
+        authService.login(req.getUsername(), req.getPassword());
+
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Регистрация пользователя",
@@ -72,12 +70,9 @@ public class AuthController {
     )
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody RegisterReqDto req) {
-        Role role = req.getRole() == null ? USER : req.getRole();
-        if (authService.register(req, role)) {
-            System.out.println("Проверка register");
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        logger.info("Request for registration user");
+        authService.register(req);
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -4,6 +4,6 @@ import team.skyprojava.websitebackend.dto.RegisterReqDto;
 import team.skyprojava.websitebackend.dto.Role;
 
 public interface AuthService {
-    boolean login(String userName, String password);
-    boolean register(RegisterReqDto registerReqDto, Role role);
+    void login(String userName, String password);
+    void register(RegisterReqDto registerReqDto);
 }
