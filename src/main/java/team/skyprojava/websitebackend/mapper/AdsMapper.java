@@ -9,8 +9,8 @@ import team.skyprojava.websitebackend.dto.CreateAdsDto;
 import team.skyprojava.websitebackend.dto.FullAdsDto;
 import team.skyprojava.websitebackend.entity.Ads;
 
-@Mapper
 @Component
+@Mapper
 public interface AdsMapper{
     AdsMapper INSTANCE = Mappers.getMapper(AdsMapper.class);
 

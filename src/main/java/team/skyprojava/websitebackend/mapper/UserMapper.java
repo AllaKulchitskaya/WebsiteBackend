@@ -9,8 +9,8 @@ import team.skyprojava.websitebackend.dto.RegisterReqDto;
 import team.skyprojava.websitebackend.dto.UserDto;
 import team.skyprojava.websitebackend.entity.User;
 
-@Mapper
 @Component
+@Mapper
 public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
