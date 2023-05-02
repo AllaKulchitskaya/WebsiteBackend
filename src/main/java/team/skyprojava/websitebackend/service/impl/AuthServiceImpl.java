@@ -46,11 +46,11 @@ public class AuthServiceImpl implements AuthService {
         logger.info("Was invoked method for user registration");
         team.skyprojava.websitebackend.entity.User user = userMapper.toEntity(registerReqDto);
         if (userRepository.existsByEmail(user.getEmail())) {
-            logger.warn("user already exists");
+            logger.warn("User already exists");
             throw new ValidationException(String.format("User \"%s\" has already been registered!", user.getEmail()));
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        logger.info("user registered");
+        logger.info("User registered");
         userRepository.save(user);
     }
 }

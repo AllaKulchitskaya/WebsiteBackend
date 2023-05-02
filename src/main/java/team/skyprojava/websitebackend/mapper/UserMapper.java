@@ -26,6 +26,6 @@ public interface UserMapper {
     @Mapping(target = "userImage", ignore = true)
     User toEntity(RegisterReqDto registerReqDto);
 
-    @Mapping(target = "image", expression = "java(\"/users/\" + user.getId() + \"/image/\")")
+    @Mapping(target = "image", expression = "java(\"/users/\" + user.getId() + \"/image\")")
     UserDto toDto(User user);
 }
