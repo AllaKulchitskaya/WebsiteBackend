@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +17,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import team.skyprojava.websitebackend.dto.LoginReqDto;
 import team.skyprojava.websitebackend.dto.RegisterReqDto;
-import team.skyprojava.websitebackend.dto.Role;
 import team.skyprojava.websitebackend.service.AuthService;
 
 
-import static team.skyprojava.websitebackend.dto.Role.USER;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
+@Tag(name = "Авторизация и регистрация", description = "Authentication/Registration")
 public class AuthController {
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);

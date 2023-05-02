@@ -1,5 +1,7 @@
-package team.skyprojava.websitebackend.controller;
+package team.skyprojava.websitebackend.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -11,6 +13,8 @@ import java.io.IOException;
 
 @Component
 public class BasicAuthCorsFilter extends OncePerRequestFilter {
+
+    private final Logger logger = LoggerFactory.getLogger(BasicAuthCorsFilter.class);
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
                                     HttpServletResponse httpServletResponse,

@@ -28,7 +28,7 @@ import team.skyprojava.websitebackend.service.AdsService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/ads")
-@Tag(name = "Объявления", description = "AdsController")
+@Tag(name = "Объявления", description = "Ads")
 public class AdsController {
 
     private final Logger logger = LoggerFactory.getLogger(AdsController.class);
