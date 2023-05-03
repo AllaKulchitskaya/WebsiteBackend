@@ -7,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import team.skyprojava.websitebackend.dto.RegisterReqDto;
@@ -30,27 +31,30 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public void login(String username, String password) {
+    public boolean login(String username, String password) {
         logger.info("Was invoked method for user authorization");
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            logger.warn("the password is incorrect");
-            throw new BadCredentialsException("The password is incorrect");
-        }
+            if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+                logger.warn("The password is incorrect");
+                return false;
+            }
+            logger.info("User has been successfully logged in");
+            return true;
     }
 
     @Override
-    public void register(RegisterReqDto registerReqDto) {
+    public boolean register(RegisterReqDto registerReqDto) {
         logger.info("Was invoked method for user registration");
         team.skyprojava.websitebackend.entity.User user = userMapper.toEntity(registerReqDto);
         if (userRepository.existsByEmail(user.getEmail())) {
-            logger.warn("user already exists");
-            throw new ValidationException(String.format("User \"%s\" has already been registered!", user.getEmail()));
+            logger.warn("User already exists");
+            return false;
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        logger.info("user registered");
+        logger.info("User registered");
         userRepository.save(user);
+        return true;
     }
 }

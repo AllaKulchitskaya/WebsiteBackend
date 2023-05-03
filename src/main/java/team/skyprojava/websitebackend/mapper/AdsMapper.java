@@ -27,7 +27,7 @@ public interface AdsMapper{
 
     @Mapping(target = "author", source = "author.id")
     @Mapping(target = "pk", source = "id")
-    @Mapping(target = "image", expression = "java(\"/ads/\" + ads.getId() + \"/image/\")")
+    @Mapping(target = "image", expression = "java(\"/ads/\" + ads.getId() + \"/image\")")
     AdsDto toAdsDto(Ads ads);
 
     @Mapping(target = "pk", source = "id")
@@ -35,6 +35,6 @@ public interface AdsMapper{
     @Mapping(target = "authorLastName", source = "author.lastName")
     @Mapping(target = "email", source = "author.email")
     @Mapping(target = "phone", source = "author.phone")
-    @Mapping(target = "image", expression = "java(\"/ads/\" + ads.getId() + \"/image/\")")
+    @Mapping(target = "image", expression = "java(\"/ads/\" + ads.getId() + \"/image\")")
     FullAdsDto toDto(Ads ads);
 }

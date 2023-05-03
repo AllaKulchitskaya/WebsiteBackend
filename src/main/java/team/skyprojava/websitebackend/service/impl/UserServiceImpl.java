@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +15,6 @@ import team.skyprojava.websitebackend.exception.UserNotFoundException;
 import team.skyprojava.websitebackend.mapper.UserMapper;
 import team.skyprojava.websitebackend.repository.UserImageRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
-import team.skyprojava.websitebackend.security.UserDetailsServiceImpl;
 import team.skyprojava.websitebackend.service.UserService;
 
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @Override
     public UserDto getUserMe(Authentication authentication) {

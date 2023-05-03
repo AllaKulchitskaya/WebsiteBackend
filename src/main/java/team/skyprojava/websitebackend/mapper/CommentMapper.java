@@ -24,7 +24,7 @@ public interface CommentMapper{
 
     @Mapping(target = "author", source = "author.id")
     @Mapping(target = "authorFirstName", source = "author.firstName")
-    @Mapping(target = "authorImage", expression = "java(\"/users/\" + comment.getAuthor().getId() + \"/image/\")")
+    @Mapping(target = "authorImage", expression = "java(\"/users/\" + comment.getAuthor().getId() + \"/image\")")
     @Mapping(target = "pk", source = "id")
     @Mapping(target = "createdAt", expression = "java(LocalDateTime.now().toInstant(ZoneOffset.ofHours(3)).toEpochMilli())")
     CommentDto toDto(Comment comment);
