@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import team.skyprojava.websitebackend.dto.RegisterReqDto;
 import team.skyprojava.websitebackend.dto.Role;
 import team.skyprojava.websitebackend.mapper.UserMapper;
@@ -17,7 +18,7 @@ import team.skyprojava.websitebackend.repository.UserRepository;
 import team.skyprojava.websitebackend.service.AuthService;
 
 import javax.validation.ValidationException;
-
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {

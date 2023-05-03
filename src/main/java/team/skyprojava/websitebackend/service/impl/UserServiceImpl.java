@@ -31,6 +31,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
+
+
     @Override
     public UserDto getUserMe(Authentication authentication) {
         User user = getUserByEmail(authentication.getName());
