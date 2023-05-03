@@ -48,17 +48,19 @@ public class AuthController {
             tags = "Users"
     )
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginReqDto req) {
+    public ResponseEntity<?> login(@RequestBody LoginReqDto req) {
         logger.info("Request for authorization user");
-        authService.login(req.getUsername(), req.getPassword());
-
-        return ResponseEntity.ok().build();
+        if (authService.login(req.getUsername(), req.getPassword())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @Operation(summary = "Регистрация пользователя",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "201",
                             description = "Зарегистрированный пользователь",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -69,10 +71,12 @@ public class AuthController {
             tags = "Users"
     )
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterReqDto req) {
+    public ResponseEntity<?> register(@RequestBody RegisterReqDto req) {
         logger.info("Request for registration user");
-        authService.register(req);
-
-        return ResponseEntity.ok().build();
+        if (authService.register(req)) {
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }
