@@ -23,6 +23,7 @@ import team.skyprojava.websitebackend.service.AdsService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,7 +56,12 @@ public class AdsServiceImpl implements AdsService {
             result.setResults(adsDtoList);
             return result;
         }
-        throw new AdsNotFoundException("Ads are not found");
+        else {
+            ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
+            result.setCount(0);
+            result.setResults(Collections.emptyList());
+            return result;
+        }
     }
 
     @Override
