@@ -73,10 +73,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterReqDto req) {
         logger.info("Request for registration user");
-        if (authService.register(req)) {
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        authService.register(req);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

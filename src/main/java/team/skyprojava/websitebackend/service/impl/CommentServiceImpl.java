@@ -17,10 +17,13 @@ import team.skyprojava.websitebackend.mapper.CommentMapper;
 import team.skyprojava.websitebackend.repository.AdsRepository;
 import team.skyprojava.websitebackend.repository.CommentRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
+import team.skyprojava.websitebackend.security.SecurityAccess;
 import team.skyprojava.websitebackend.service.CommentService;
+import team.skyprojava.websitebackend.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -31,6 +34,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
     private final UserRepository userRepository;
     private final AdsRepository adsRepository;
+    UserService userService;
 
     @Override
     public ResponseWrapperCommentDto getCommentsByAdsId(int id) {
@@ -46,7 +50,12 @@ public class CommentServiceImpl implements CommentService {
             result.setResults(commentDtoList);
             return result;
         }
-        throw new CommentNotFoundException("Comments are not found");
+        else {
+            ResponseWrapperCommentDto result = new ResponseWrapperCommentDto();
+            result.setCount(0);
+            result.setResults(Collections.emptyList());
+            return result;
+        }
     }
 
     @Override
@@ -63,20 +72,26 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void removeComment(int adId, int commentId) {
+    public void removeComment(int adId, int commentId, Authentication authentication) {
         Comment comment = getCommentById(commentId);
         if (comment.getAds().getId() != adId) {
             throw new NotFoundException("The comment isn't referred to this ads");
         }
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+        SecurityAccess.commentPermission(comment, user);
         commentRepository.delete(comment);
     }
 
     @Override
-    public CommentDto updateComment(int adId, int commentId, CommentDto commentDto) {
+    public CommentDto updateComment(int adId, int commentId, CommentDto commentDto, Authentication authentication) {
         Comment comment = getCommentById(commentId);
         if (comment.getAds().getId() != adId) {
             throw new NotFoundException("The comment isn't referred to this ads");
         }
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+        SecurityAccess.commentPermission(comment, user);
         comment.setText(commentDto.getText());
         CommentDto newCommentDto = commentMapper.toDto(comment);
         return newCommentDto;

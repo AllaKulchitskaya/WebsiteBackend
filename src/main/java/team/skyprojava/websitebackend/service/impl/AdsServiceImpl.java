@@ -19,6 +19,7 @@ import team.skyprojava.websitebackend.mapper.AdsMapper;
 import team.skyprojava.websitebackend.repository.AdsImageRepository;
 import team.skyprojava.websitebackend.repository.AdsRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
+import team.skyprojava.websitebackend.security.SecurityAccess;
 import team.skyprojava.websitebackend.service.AdsService;
 
 import java.io.IOException;
@@ -76,24 +77,26 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public void removeAds(int id) {
+    public void removeAds(int id, Authentication authentication) {
         logger.info("Was invoked method for delete ad by id");
         Ads ads = getAdsById(id);
         logger.warn("Ad by id {} not found", id);
+        SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()));
         adsRepository.delete(ads);
     }
 
     @Override
-    public AdsDto updateAds(int id, CreateAdsDto updateAdsDto) {
+    public AdsDto updateAds(int id, CreateAdsDto updateAdsDto, Authentication authentication) {
         logger.info("Was invoked method for update ad by id");
-        Ads updatedAds = getAdsById(id);
+        Ads ads = getAdsById(id);
         logger.warn("Ad by id {} not found", id);
-        updatedAds.setTitle(updateAdsDto.getTitle());
-        updatedAds.setDescription(updateAdsDto.getDescription());
-        updatedAds.setPrice(updateAdsDto.getPrice());
-        adsRepository.save(updatedAds);
+        SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()));
+        ads.setTitle(updateAdsDto.getTitle());
+        ads.setDescription(updateAdsDto.getDescription());
+        ads.setPrice(updateAdsDto.getPrice());
+        adsRepository.save(ads);
         logger.info("ad updated");
-        return adsMapper.toAdsDto(updatedAds);
+        return adsMapper.toAdsDto(ads);
     }
 
     @Override
@@ -118,7 +121,12 @@ public class AdsServiceImpl implements AdsService {
             result.setResults(adsDtoList);
             return result;
         }
-        throw new AdsNotFoundException("Ads are not found");
+        else {
+            ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
+            result.setCount(0);
+            result.setResults(Collections.emptyList());
+            return result;
+        }
     }
 
     @Override

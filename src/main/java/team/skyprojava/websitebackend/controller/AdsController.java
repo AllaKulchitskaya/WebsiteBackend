@@ -13,6 +13,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -57,7 +58,7 @@ public class AdsController {
     @Operation(summary = "Создание объявления",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "201",
                             description = "Созданное объявление",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -75,7 +76,9 @@ public class AdsController {
                                              @RequestPart("properties") CreateAdsDto createAdsDto,
                                          @RequestPart("image") MultipartFile image) {
         logger.info("Request for add new ad");
-        return ResponseEntity.ok(adsService.createAds(createAdsDto, image, authentication));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(adsService.createAds(createAdsDto, image, authentication));
     }
 
     @Operation(summary = "Поиск объявления по id",
@@ -101,22 +104,17 @@ public class AdsController {
     @Operation(summary = "Удаление объявления",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
-                            description = "Удаленное объявление",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Ads.class)
-                            )
+                            responseCode = "204"
                     ),
                     @ApiResponse(responseCode = "404", description = "Not Found")
             },
             tags = "Ads"
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeAds(@PathVariable int id) {
+    public ResponseEntity<Void> removeAds(@PathVariable int id, Authentication authentication) {
         logger.info("Request for delete ad by id");
-        adsService.removeAds(id);
-        return ResponseEntity.ok().build();
+        adsService.removeAds(id, authentication);
+        return ResponseEntity.noContent().build();
     }
 
     @SneakyThrows
@@ -130,15 +128,16 @@ public class AdsController {
                                     schema = @Schema(implementation = AdsDto.class)
                             )
                     ),
-                    @ApiResponse(responseCode = "404", description = "Not Found")
+                    @ApiResponse(responseCode = "403", description = "Forbidden")
             },
             tags = "Ads"
     )
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@PathVariable int id,
-                                            @RequestBody CreateAdsDto updatedAdsDto) {
+                                            @RequestBody CreateAdsDto updatedAdsDto,
+                                            Authentication authentication) {
         logger.info("Request for update ad by id");
-        AdsDto updateAdsDto = adsService.updateAds(id, updatedAdsDto);
+        AdsDto updateAdsDto = adsService.updateAds(id, updatedAdsDto, authentication);
         return ResponseEntity.ok(updateAdsDto);
     }
 
