@@ -24,6 +24,7 @@ import team.skyprojava.websitebackend.repository.AdsImageRepository;
 import team.skyprojava.websitebackend.repository.AdsRepository;
 import team.skyprojava.websitebackend.repository.CommentRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
+import team.skyprojava.websitebackend.security.SecurityAccess;
 import team.skyprojava.websitebackend.service.AdsService;
 
 import java.io.IOException;
@@ -154,7 +155,12 @@ public class AdsServiceImpl implements AdsService {
             result.setResults(adsDtoList);
             return result;
         }
-        throw new AdsNotFoundException("Ads are not found");
+        else {
+            ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
+            result.setCount(0);
+            result.setResults(Collections.emptyList());
+            return result;
+        }
     }
 
     @Override

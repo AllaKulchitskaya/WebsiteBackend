@@ -63,7 +63,7 @@ public class AdsController {
     @Operation(summary = "Создание объявления",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "201",
                             description = "Созданное объявление",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -82,7 +82,9 @@ public class AdsController {
                                              @RequestPart("properties") CreateAdsDto createAdsDto,
                                          @RequestPart("image") MultipartFile image) {
         logger.info("Request for add new ad");
-        return ResponseEntity.ok(adsService.createAds(createAdsDto, image, authentication));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(adsService.createAds(createAdsDto, image, authentication));
     }
 
     @Operation(summary = "Поиск объявления по id",
@@ -108,12 +110,7 @@ public class AdsController {
     @Operation(summary = "Удаление объявления",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
-                            description = "Удаленное объявление",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Ads.class)
-                            )
+                            responseCode = "204"
                     ),
                     @ApiResponse(responseCode = "401", description = "Not authorized"),
                     @ApiResponse(responseCode = "403", description = "Not access")
