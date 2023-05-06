@@ -2,6 +2,7 @@ package team.skyprojava.websitebackend.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
+import team.skyprojava.websitebackend.dto.NewPasswordDto;
 import team.skyprojava.websitebackend.dto.UserDto;
 
 
@@ -25,10 +26,9 @@ public interface UserService {
     /**
      * Изменение пароля пользователя
      *
-     * @param newPassword     новый пароль
-     * @param currentPassword старый пароль
+     * @param newPasswordDto     новый пароль
      */
-    void newPassword(String newPassword, String currentPassword, Authentication authentication);
+    void newPassword(NewPasswordDto newPasswordDto, Authentication authentication);
 
     /**
      * Обновление аватара пользователя
