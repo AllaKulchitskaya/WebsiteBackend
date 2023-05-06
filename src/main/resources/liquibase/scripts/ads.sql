@@ -26,3 +26,7 @@ ALTER TABLE ads
 DROP CONSTRAINT ads_comment_id_fkey;
 ALTER TABLE ads
 DROP COLUMN comment_id;
+
+--changeset alla:4
+ALTER TABLE ads
+    ALTER COLUMN ads_image_id DROP NOT NULL;

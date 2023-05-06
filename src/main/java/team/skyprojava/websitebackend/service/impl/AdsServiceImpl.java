@@ -75,8 +75,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile image, Authentication authentication) throws IOException {
         logger.info("Was invoked method for create ad");
-        User user = getUserByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName());
+        User user = getUserByEmail(authentication.getName());
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Only authenticated users can create an ad");
         }

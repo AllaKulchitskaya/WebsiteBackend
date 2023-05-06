@@ -22,3 +22,7 @@ ALTER TABLE users
 --changeset alla:3
 ALTER TABLE users
 DROP COLUMN username;
+
+--changeset alla:4
+ALTER TABLE users
+    ALTER COLUMN user_image_id DROP NOT NULL;
