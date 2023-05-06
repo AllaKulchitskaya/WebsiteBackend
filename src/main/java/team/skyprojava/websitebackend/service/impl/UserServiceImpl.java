@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
 
 
 
