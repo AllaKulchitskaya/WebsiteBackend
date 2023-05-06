@@ -48,3 +48,13 @@ ALTER TABLE users
 --changeset alla:7
 ALTER TABLE users
 DROP COLUMN username;
+
+--users3
+--changeset alla:8
+ALTER TABLE users
+    ALTER COLUMN user_image_id DROP NOT NULL;
+
+--ads3
+--changeset alla:9
+ALTER TABLE ads
+    ALTER COLUMN ads_image_id DROP NOT NULL;
