@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
             logger.info("Password updated");
             userDetailsServiceImpl.loadUserByUsername(user.getEmail());
         } else {
-            logger.info("The current password is incorrect");
+            logger.warn("The current password is incorrect");
             throw new BadCredentialsException("The current password is incorrect!");
         }
     }
