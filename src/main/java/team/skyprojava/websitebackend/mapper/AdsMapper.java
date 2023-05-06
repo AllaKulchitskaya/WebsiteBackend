@@ -2,6 +2,7 @@ package team.skyprojava.websitebackend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import team.skyprojava.websitebackend.dto.AdsDto;
@@ -10,7 +11,7 @@ import team.skyprojava.websitebackend.dto.FullAdsDto;
 import team.skyprojava.websitebackend.entity.Ads;
 
 @Component
-@Mapper
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AdsMapper{
     AdsMapper INSTANCE = Mappers.getMapper(AdsMapper.class);
 
