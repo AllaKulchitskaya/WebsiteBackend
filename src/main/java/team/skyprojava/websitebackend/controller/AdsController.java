@@ -59,7 +59,7 @@ public class AdsController {
         return ResponseEntity.ok(responseWrapperAdsDto);
     }
     @SneakyThrows
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER')")
     @Operation(summary = "Создание объявления",
             responses = {
                     @ApiResponse(
@@ -101,12 +101,16 @@ public class AdsController {
             tags = "Ads"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<FullAdsDto> getAds(@PathVariable int id) {
+    public ResponseEntity<FullAdsDto> getFullAds(@PathVariable int id, Authentication authentication) {
         logger.info("Request for get ad by id");
-        return ResponseEntity.ok(adsService.getFullAdsDto(id));
+        if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(adsService.getFullAdsDto(id, authentication));
     }
 
     @SneakyThrows
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @Operation(summary = "Удаление объявления",
             responses = {
                     @ApiResponse(
@@ -127,6 +131,7 @@ public class AdsController {
     }
 
     @SneakyThrows
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @Operation(summary = "Изменение объявления",
             responses = {
                     @ApiResponse(
@@ -162,13 +167,17 @@ public class AdsController {
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = AdsDto[].class)
                             )
-                    )
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Not authorized")
             },
             tags = "Ads"
     )
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapperAdsDto> getAdsMe(Authentication authentication) {
         logger.info("Request for found ads me");
+        if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         ResponseWrapperAdsDto responseWrapperAdsDto = adsService.getAdsMe(authentication);
         return ResponseEntity.ok(responseWrapperAdsDto);
     }

@@ -134,8 +134,11 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public FullAdsDto getFullAdsDto(int id) {
+    public FullAdsDto getFullAdsDto(int id, Authentication authentication) {
         logger.info("Was invoked method for get full ad dto");
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("User is not authenticated");
+        }
         Ads ads = getAdsById(id);
         return adsMapper.toDto(ads);
     }
@@ -143,6 +146,9 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public ResponseWrapperAdsDto getAdsMe(Authentication authentication) {
         logger.info("Service for get ads me");
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Don't authenticated");
+        }
         User user = getUserByEmail(authentication.getName());
         List<Ads> adsList = adsRepository.findAllByAuthorId(user.getId());
         if (!adsList.isEmpty()) {
