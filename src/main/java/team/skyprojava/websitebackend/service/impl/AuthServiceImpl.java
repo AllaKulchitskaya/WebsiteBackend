@@ -15,6 +15,7 @@ import team.skyprojava.websitebackend.dto.RegisterReqDto;
 import team.skyprojava.websitebackend.dto.Role;
 import team.skyprojava.websitebackend.mapper.UserMapper;
 import team.skyprojava.websitebackend.repository.UserRepository;
+import team.skyprojava.websitebackend.security.UserDetailsServiceImpl;
 import team.skyprojava.websitebackend.service.AuthService;
 
 import javax.validation.ValidationException;
@@ -24,7 +25,7 @@ import javax.validation.ValidationException;
 public class AuthServiceImpl implements AuthService {
 
     private final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
@@ -35,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
     public boolean login(String username, String password) {
         logger.info("Was invoked method for user authorization");
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
 
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 logger.warn("The password is incorrect");

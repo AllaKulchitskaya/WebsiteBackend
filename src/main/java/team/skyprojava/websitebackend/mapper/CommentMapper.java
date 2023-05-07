@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Component
-@Mapper(imports = {LocalDateTime.class, ZoneOffset.class},componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, imports = {LocalDateTime.class, ZoneOffset.class})
 public interface CommentMapper{
 
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);

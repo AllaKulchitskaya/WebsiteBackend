@@ -35,3 +35,14 @@ The project has to meet the following requirements:
 - Liquibase
 - Mapstruct
 - Swagger
+
+## Requirements for running the project:
+- Clone this project from the repository to your development environment
+- An empty database (Postgresql) and the following connection parameters in application.properties filled with your values:
+  - spring.datasource.url=jdbc:postgresql://{database server IP address}/{database name}
+  - spring.datasource.username={database username}
+  - spring.datasource.password={database user password}
+- Run [Docker](https://www.docker.com/)
+- Run [Docker image](https://drive.google.com/file/d/1UZTpeTAQpC4ANkHEFAGK2yjTFzZhXLPz/view)
+- Run _main_ in WebsiteBackendApplication.java
+- Use http://localhost:3000 in the browser address bar to check the website

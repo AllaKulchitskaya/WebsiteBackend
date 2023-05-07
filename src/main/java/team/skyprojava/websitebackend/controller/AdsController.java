@@ -13,14 +13,19 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import team.skyprojava.websitebackend.dto.*;
 import team.skyprojava.websitebackend.entity.Ads;
 import team.skyprojava.websitebackend.service.AdsService;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 @Slf4j
@@ -54,16 +59,18 @@ public class AdsController {
         return ResponseEntity.ok(responseWrapperAdsDto);
     }
     @SneakyThrows
+    @PreAuthorize("hasAnyAuthority('USER')")
     @Operation(summary = "Создание объявления",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "201",
                             description = "Созданное объявление",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = AdsDto.class)
                             )
-                    )
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Not authorized")
             },
             tags = "Ads"
     )
@@ -75,7 +82,9 @@ public class AdsController {
                                              @RequestPart("properties") CreateAdsDto createAdsDto,
                                          @RequestPart("image") MultipartFile image) {
         logger.info("Request for add new ad");
-        return ResponseEntity.ok(adsService.createAds(createAdsDto, image, authentication));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(adsService.createAds(createAdsDto, image, authentication));
     }
 
     @Operation(summary = "Поиск объявления по id",
@@ -92,34 +101,37 @@ public class AdsController {
             tags = "Ads"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<FullAdsDto> getAds(@PathVariable int id) {
+    public ResponseEntity<FullAdsDto> getFullAds(@PathVariable int id, Authentication authentication) {
         logger.info("Request for get ad by id");
-        return ResponseEntity.ok(adsService.getFullAdsDto(id));
+        if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(adsService.getFullAdsDto(id, authentication));
     }
 
     @SneakyThrows
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @Operation(summary = "Удаление объявления",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
-                            description = "Удаленное объявление",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Ads.class)
-                            )
+                            responseCode = "204"
                     ),
-                    @ApiResponse(responseCode = "404", description = "Not Found")
+                    @ApiResponse(responseCode = "401", description = "Not authorized"),
+                    @ApiResponse(responseCode = "403", description = "Not access")
             },
             tags = "Ads"
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeAds(@PathVariable int id) {
+    public ResponseEntity<HttpStatus> removeAds(@PathVariable int id, Authentication authentication) {
         logger.info("Request for delete ad by id");
-        adsService.removeAds(id);
-        return ResponseEntity.ok().build();
+        if (adsService.removeAds(id, authentication)){
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
     }
 
     @SneakyThrows
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @Operation(summary = "Изменение объявления",
             responses = {
                     @ApiResponse(
@@ -130,15 +142,19 @@ public class AdsController {
                                     schema = @Schema(implementation = AdsDto.class)
                             )
                     ),
-                    @ApiResponse(responseCode = "404", description = "Not Found")
+                    @ApiResponse(responseCode = "401", description = "Not authorized"),
+                    @ApiResponse(responseCode = "403", description = "Not access")
             },
             tags = "Ads"
     )
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@PathVariable int id,
-                                            @RequestBody CreateAdsDto updatedAdsDto) {
+                                            @RequestBody CreateAdsDto updatedAdsDto, Authentication authentication) {
         logger.info("Request for update ad by id");
-        AdsDto updateAdsDto = adsService.updateAds(id, updatedAdsDto);
+        AdsDto updateAdsDto = adsService.updateAds(id, updatedAdsDto, authentication);
+        if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         return ResponseEntity.ok(updateAdsDto);
     }
 
@@ -151,13 +167,17 @@ public class AdsController {
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = AdsDto[].class)
                             )
-                    )
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Not authorized")
             },
             tags = "Ads"
     )
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapperAdsDto> getAdsMe(Authentication authentication) {
         logger.info("Request for found ads me");
+        if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         ResponseWrapperAdsDto responseWrapperAdsDto = adsService.getAdsMe(authentication);
         return ResponseEntity.ok(responseWrapperAdsDto);
     }

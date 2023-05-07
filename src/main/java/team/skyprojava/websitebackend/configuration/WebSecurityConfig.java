@@ -1,11 +1,8 @@
 package team.skyprojava.websitebackend.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +16,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
     @Value("${spring.datasource.url}")
@@ -36,7 +33,8 @@ public class WebSecurityConfig {
             "/v3/api-docs",
             "/webjars/**",
             "/login", "/register",
-            "/ads"
+            "/ads", "/ads/*/image",
+            "/users/*/image"
     };
 
     @Bean
@@ -47,11 +45,12 @@ public class WebSecurityConfig {
                         authz
                                 .mvcMatchers(AUTH_WHITELIST).permitAll()
                                 .mvcMatchers("/ads/**", "/users/**").authenticated()
+
                 )
                 .cors()
                 .and()
                 .httpBasic(withDefaults());
-                return http.build();
+        return http.build();
     }
 
     @Bean
@@ -63,12 +62,12 @@ public class WebSecurityConfig {
         dataSourceBuilder.driverClassName(dbDriver);
         return dataSourceBuilder.build();
     }
-/*
+
     @Bean
     public JdbcUserDetailsManager jdbcUserDetailsManager() {
         return new JdbcUserDetailsManager(dataSource());
     }
-*/
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -12,19 +12,3 @@ CREATE TABLE ads
     ads_image_id INTEGER     NOT NULL,
     PRIMARY KEY (ads_id)
 );
-
---changeset alla:2
-ALTER TABLE ads
-    ADD FOREIGN KEY (user_id) REFERENCES users (user_id);
-ALTER TABLE ads
-    ADD FOREIGN KEY (comment_id) REFERENCES comment (comment_id);
-ALTER TABLE ads
-    ADD FOREIGN KEY (ads_image_id) REFERENCES ads_image (ads_image_id);
-
---changeset alla:3
-ALTER TABLE ads
-DROP
-CONSTRAINT ads_comment_id_fkey;
-ALTER TABLE ads
-DROP
-COLUMN comment_id;

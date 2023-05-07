@@ -9,12 +9,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import team.skyprojava.websitebackend.dto.NewPasswordDto;
 import team.skyprojava.websitebackend.dto.UserDto;
 import team.skyprojava.websitebackend.entity.User;
 import team.skyprojava.websitebackend.exception.UserNotFoundException;
 import team.skyprojava.websitebackend.mapper.UserMapper;
 import team.skyprojava.websitebackend.repository.UserImageRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
+import team.skyprojava.websitebackend.security.UserDetailsServiceImpl;
 import team.skyprojava.websitebackend.service.UserService;
 
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
 
 
@@ -51,15 +53,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void newPassword(String newPassword, String currentPassword, Authentication authentication) {
+    public void newPassword(NewPasswordDto newPasswordDto, Authentication authentication) {
         logger.info("Was invoked method for create new password");
         User user = getUserByEmail(authentication.getName());
-        if (passwordEncoder.matches(currentPassword, user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(newPassword));
+        if (passwordEncoder.matches(newPasswordDto.getCurrentPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPasswordDto.getNewPassword()));
             userRepository.save(user);
-            logger.info("password updated");
+            logger.info("Password updated");
+            userDetailsServiceImpl.loadUserByUsername(user.getEmail());
+        } else {
+            logger.warn("The current password is incorrect");
+            throw new BadCredentialsException("The current password is incorrect");
         }
-        throw new BadCredentialsException("The current password is incorrect!");
     }
 
     @Override

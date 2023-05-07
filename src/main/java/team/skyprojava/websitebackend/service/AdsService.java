@@ -20,11 +20,11 @@ public interface AdsService {
 
     AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile image, Authentication authentication) throws IOException;
 
-    void removeAds(int id) throws IOException;
+    boolean removeAds(int id, Authentication authentication) throws IOException;
 
-    AdsDto updateAds(int id, CreateAdsDto updateAdsDto);
+    AdsDto updateAds(int id, CreateAdsDto updateAdsDto, Authentication authentication);
 
-    FullAdsDto getFullAdsDto(int id);
+    FullAdsDto getFullAdsDto(int id, Authentication authentication);
 
     ResponseWrapperAdsDto getAdsMe(Authentication authentication);
     byte[] updateAdsImage(int id, MultipartFile image);
