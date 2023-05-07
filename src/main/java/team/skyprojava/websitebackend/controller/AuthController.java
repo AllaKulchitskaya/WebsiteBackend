@@ -38,18 +38,14 @@ public class AuthController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Авторизированный пользователь",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = LoginReqDto.class)
-                            )
+                            description = "Авторизированный пользователь"
                     )
             },
             tags = "Users"
     )
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDto req) {
-        logger.info("Request for authorization user");
+        logger.info("Request for user's authorization");
         if (authService.login(req.getUsername(), req.getPassword())) {
             return ResponseEntity.ok().build();
         } else {
@@ -61,18 +57,14 @@ public class AuthController {
             responses = {
                     @ApiResponse(
                             responseCode = "201",
-                            description = "Зарегистрированный пользователь",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = RegisterReqDto.class)
-                            )
+                            description = "Зарегистрированный пользователь"
                     )
             },
             tags = "Users"
     )
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterReqDto req) {
-        logger.info("Request for registration user");
+        logger.info("Request for user's registration");
         authService.register(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

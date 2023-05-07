@@ -41,11 +41,15 @@ public class UserController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Новый пароль",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = NewPasswordDto.class)
-                            )
+                            description = "Новый пароль"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Not authorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "No access"
                     )
             },
             tags = "Users"
@@ -53,7 +57,7 @@ public class UserController {
 
     @PostMapping("/set_password")
     public ResponseEntity<Void> setPassword(@RequestBody NewPasswordDto newPasswordDto, Authentication authentication) {
-        logger.info("Request for create new password");
+        logger.info("Request for creating new password");
         userService.newPassword(newPasswordDto, authentication);
         return ResponseEntity.ok().build();
     }
@@ -67,13 +71,17 @@ public class UserController {
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = UserDto.class)
                             )
+
+                    ),
+                    @ApiResponse(responseCode = "401",
+                            description = "Not authorized"
                     )
             },
             tags = "Users"
     )
     @PatchMapping("/me")
     public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, Authentication authentication) {
-        logger.info("Request for update user");
+        logger.info("Request for updating my user information");
         return ResponseEntity.ok(userService.updateUser(userDto, authentication));
     }
 
@@ -87,13 +95,16 @@ public class UserController {
                                     schema = @Schema(implementation = UserDto.class)
                             )
                     ),
-                    @ApiResponse(responseCode = "404", description = "Not Found")
+                    @ApiResponse(responseCode = "401",
+                            description = "Not authorized"
+                    )
             },
             tags = "Users"
     )
     @GetMapping("/me")
     public ResponseEntity<UserDto> getUser(Authentication authentication) {
-        logger.info("Request for get users");
+        logger.info("Request for getting my profile");
+
         UserDto userDto = userService.getUserMe(authentication);
         return ResponseEntity.ok(userDto);
     }
@@ -107,7 +118,10 @@ public class UserController {
                             responseCode = "200",
                             description = "Новое изображение"
                     ),
-                    @ApiResponse(responseCode = "404", description = "Not Found")
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Not authorized"
+                    )
             },
             tags = "UserImage"
     )
@@ -117,7 +131,8 @@ public class UserController {
                                                         description = "Загрузите сюда новое изображение",
                                                         schema = @Schema())
                                                 @RequestPart(value = "image") MultipartFile image) {
-        logger.info("Request for update user image");
+        logger.info("Request for updating user's image");
+
         userService.updateUserImage(image, authentication);
         return ResponseEntity.ok().build();
     }
