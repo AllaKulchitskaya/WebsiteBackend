@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import team.skyprojava.websitebackend.dto.LoginReqDto;
 import team.skyprojava.websitebackend.dto.NewPasswordDto;
 import team.skyprojava.websitebackend.dto.UserDto;
 import team.skyprojava.websitebackend.entity.User;
@@ -63,7 +62,7 @@ public class UserServiceImpl implements UserService {
             userDetailsServiceImpl.loadUserByUsername(user.getEmail());
         } else {
             logger.warn("The current password is incorrect");
-            throw new BadCredentialsException("The current password is incorrect!");
+            throw new BadCredentialsException("The current password is incorrect");
         }
     }
 

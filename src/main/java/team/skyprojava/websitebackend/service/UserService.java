@@ -26,7 +26,7 @@ public interface UserService {
     /**
      * Изменение пароля пользователя
      *
-     * @param newPasswordDto     новый пароль
+     * @param newPasswordDto  нынешний и новый пароль
      */
     void newPassword(NewPasswordDto newPasswordDto, Authentication authentication);
 

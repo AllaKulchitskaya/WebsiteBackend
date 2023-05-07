@@ -24,7 +24,6 @@ import team.skyprojava.websitebackend.repository.AdsImageRepository;
 import team.skyprojava.websitebackend.repository.AdsRepository;
 import team.skyprojava.websitebackend.repository.CommentRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
-import team.skyprojava.websitebackend.security.SecurityAccess;
 import team.skyprojava.websitebackend.service.AdsService;
 
 import java.io.IOException;
@@ -89,11 +88,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public boolean removeAds(int id, Authentication authentication) {
         logger.info("Was invoked method for delete ad by id");
-        Ads ads = adsRepository.findById(id)
-                .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("Only authenticated users can delete an ad");
-        }
+        Ads ads = getAdsById(id);
         if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
                 && !ads.getAuthor().getEmail().equals(authentication.getName())) {
             throw new AccessDeniedException("Only the author of the ad or an admin can delete it");
@@ -115,10 +110,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdsDto updateAds(int id, CreateAdsDto updateAdsDto, Authentication authentication) {
         logger.info("Was invoked method for update ad by id");
-        // проверяем, что пользователь авторизован
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("User is not authenticated");
-        }
+
         Ads updatedAds = getAdsById(id);
         // проверяем, что пользователь является автором объявления
         if (!updatedAds.getAuthor().getEmail().equals(authentication.getName())) {
@@ -135,9 +127,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public FullAdsDto getFullAdsDto(int id, Authentication authentication) {
         logger.info("Was invoked method for get full ad dto");
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("User is not authenticated");
-        }
+
         Ads ads = getAdsById(id);
         return adsMapper.toDto(ads);
     }
@@ -145,9 +135,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public ResponseWrapperAdsDto getAdsMe(Authentication authentication) {
         logger.info("Service for get ads me");
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("Don't authenticated");
-        }
+
         User user = getUserByEmail(authentication.getName());
         List<Ads> adsList = adsRepository.findAllByAuthorId(user.getId());
         if (!adsList.isEmpty()) {
