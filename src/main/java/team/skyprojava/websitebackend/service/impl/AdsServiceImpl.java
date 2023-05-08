@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.webjars.NotFoundException;
 import team.skyprojava.websitebackend.dto.AdsDto;
 import team.skyprojava.websitebackend.dto.CreateAdsDto;
 import team.skyprojava.websitebackend.dto.FullAdsDto;
@@ -20,10 +20,11 @@ import team.skyprojava.websitebackend.entity.User;
 import team.skyprojava.websitebackend.exception.AdsNotFoundException;
 import team.skyprojava.websitebackend.exception.UserNotFoundException;
 import team.skyprojava.websitebackend.mapper.AdsMapper;
-import team.skyprojava.websitebackend.repository.AdsImageRepository;
 import team.skyprojava.websitebackend.repository.AdsRepository;
 import team.skyprojava.websitebackend.repository.CommentRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
+import team.skyprojava.websitebackend.security.SecurityAccess;
+import team.skyprojava.websitebackend.service.AdsImageService;
 import team.skyprojava.websitebackend.service.AdsService;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class AdsServiceImpl implements AdsService {
     private final CommentRepository commentRepository;
     private final AdsMapper adsMapper;
     private final UserRepository userRepository;
-    private final AdsImageRepository adsImageRepository;
+    private final AdsImageService adsImageService;
 
 
     @Override
@@ -80,7 +81,7 @@ public class AdsServiceImpl implements AdsService {
         }
         Ads ads = adsMapper.toEntity(createAdsDto);
         ads.setAuthor(user);
-        //ads.setAdsImage(image);
+        ads.setAdsImage(adsImageService.uploadImage(image));
         logger.info("ad created");
         return adsMapper.toAdsDto(adsRepository.save(ads));
     }
@@ -100,6 +101,7 @@ public class AdsServiceImpl implements AdsService {
                     .map(Comment::getId)
                     .collect(Collectors.toList());
             commentRepository.deleteAllById(adsComments);
+            adsImageService.removeImage(id);
             adsRepository.delete(ads);
             logger.info("ad deleted");
             return true;
@@ -157,14 +159,16 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public byte[] updateAdsImage(int id, MultipartFile image) {
+    public byte[] updateAdsImage(int id, MultipartFile image, Authentication authentication) throws IOException {
         if (image != null) {
             Ads ads = getAdsById(id);
-            adsImageRepository.delete(ads.getAdsImage());
-            //ads.setAdsImage();
+            SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()));
+            adsImageService.removeImage(id);
+            ads.setAdsImage(adsImageService.uploadImage(image));
             adsRepository.save(ads);
+            return ads.getAdsImage().getImage();
         }
-        return null;
+        throw new NotFoundException("The image hasn't been downloaded");
     }
 
     public User getUserByEmail(String email) {

@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import team.skyprojava.websitebackend.dto.*;
+import team.skyprojava.websitebackend.service.AdsImageService;
 import team.skyprojava.websitebackend.service.AdsService;
 
 
@@ -33,6 +34,7 @@ public class AdsController {
 
     private final Logger logger = LoggerFactory.getLogger(AdsController.class);
     private final AdsService adsService;
+    private final AdsImageService adsImageService;
 
     @Operation(summary = "Просмотр всех объявлений",
             responses = {
@@ -188,12 +190,33 @@ public class AdsController {
             tags = "AdsImage"
     )
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> updateAdsImage(@PathVariable int id,
+    public ResponseEntity<byte[]> updateAdsImage(Authentication authentication,
+                                                 @PathVariable int id,
                                                  @Parameter(in = ParameterIn.DEFAULT,
                                                          description = "Загрузите сюда новое изображение",
                                                          schema = @Schema())
                                                  @RequestPart(value = "image") MultipartFile image) {
         logger.info("Request for updating ad image by id");
-        return ResponseEntity.ok(adsService.updateAdsImage(id, image));
+        return ResponseEntity.ok(adsService.updateAdsImage(id, image, authentication));
+    }
+
+    @Operation(summary = "Просмотр изображения к объявлению",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Изображение, найденное по id",
+                            content = @Content(
+                                    mediaType = MediaType.IMAGE_PNG_VALUE,
+                                    schema = @Schema(implementation = Byte[].class)
+                            )
+                    )
+            },
+            tags = "AdsImage"
+    )
+    @GetMapping(value = "/{adsId}/image", produces = {MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<byte[]> getAdsImage(@PathVariable int adsId) {
+        logger.info("Request for getting image by ad id");
+
+        return ResponseEntity.ok(adsImageService.getImageById(adsId).getImage());
     }
 }

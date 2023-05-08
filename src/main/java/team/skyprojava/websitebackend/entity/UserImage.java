@@ -1,6 +1,7 @@
 package team.skyprojava.websitebackend.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -9,9 +10,10 @@ import javax.persistence.*;
 @Data
 public class UserImage {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_image_id")
-    private Integer id;
+    private String id;
     @Column(name = "image")
-    private String image;
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    private byte[] image;
 }

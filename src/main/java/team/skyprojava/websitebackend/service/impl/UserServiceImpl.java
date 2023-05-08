@@ -13,10 +13,12 @@ import team.skyprojava.websitebackend.dto.UserDto;
 import team.skyprojava.websitebackend.entity.User;
 import team.skyprojava.websitebackend.exception.UserNotFoundException;
 import team.skyprojava.websitebackend.mapper.UserMapper;
-import team.skyprojava.websitebackend.repository.UserImageRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
 import team.skyprojava.websitebackend.security.UserDetailsServiceImpl;
+import team.skyprojava.websitebackend.service.UserImageService;
 import team.skyprojava.websitebackend.service.UserService;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @Service
@@ -25,7 +27,7 @@ public class UserServiceImpl implements UserService {
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
-    private final UserImageRepository userImageRepository;
+    private final UserImageService userImageService;
 
     private final UserMapper userMapper;
 
@@ -67,12 +69,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserImage(MultipartFile image, Authentication authentication) {
+    public void updateUserImage(MultipartFile image, Authentication authentication) throws IOException {
         User user = getUserByEmail(authentication.getName());
         if (user.getUserImage() != null) {
-            userImageRepository.delete(user.getUserImage());
+            userImageService.removeImage(user.getId());
         }
-        //user.setUserImage();
+        user.setUserImage(userImageService.uploadImage(image));
         userRepository.save(user);
     }
 

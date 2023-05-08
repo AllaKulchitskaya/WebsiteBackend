@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import team.skyprojava.websitebackend.dto.NewPasswordDto;
 import team.skyprojava.websitebackend.dto.UserDto;
+import team.skyprojava.websitebackend.service.UserImageService;
 import team.skyprojava.websitebackend.service.UserService;
 
 
@@ -33,6 +34,7 @@ public class UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final UserImageService userImageService;
 
 
 
@@ -135,6 +137,26 @@ public class UserController {
 
         userService.updateUserImage(image, authentication);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Просмотр аватара пользователя",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Изображение, найденное по id",
+                            content = @Content(
+                                    mediaType = MediaType.IMAGE_PNG_VALUE,
+                                    schema = @Schema(implementation = Byte[].class)
+                            )
+                    )
+            },
+            tags = "AdsImage"
+    )
+    @GetMapping(value = "/{userId}/image", produces = {MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<byte[]> getUserImage(@PathVariable int userId) {
+        logger.info("Request for getting image by user id");
+
+        return ResponseEntity.ok(userImageService.getImageById(userId).getImage());
     }
 
 
