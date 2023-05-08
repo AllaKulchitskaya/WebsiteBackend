@@ -19,14 +19,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
-    @Value("${spring.datasource.username}")
-    private String dbUsername;
-    @Value("${spring.datasource.password}")
-    private String dbPassword;
-    @Value("${spring.datasource.driver-class-name}")
-    private String dbDriver;
+
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
             "/swagger-ui.html",
@@ -51,21 +44,6 @@ public class WebSecurityConfig {
                 .and()
                 .httpBasic(withDefaults());
         return http.build();
-    }
-
-    @Bean
-    public DataSource dataSource() {
-        DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.url(dbUrl);
-        dataSourceBuilder.username(dbUsername);
-        dataSourceBuilder.password(dbPassword);
-        dataSourceBuilder.driverClassName(dbDriver);
-        return dataSourceBuilder.build();
-    }
-
-    @Bean
-    public JdbcUserDetailsManager jdbcUserDetailsManager() {
-        return new JdbcUserDetailsManager(dataSource());
     }
 
     @Bean
