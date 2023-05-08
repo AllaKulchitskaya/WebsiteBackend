@@ -83,6 +83,7 @@ public class CommentServiceImpl implements CommentService {
             return false;
         }
         commentRepository.delete(comment);
+        commentRepository.save(comment);
         return true;
     }
 
@@ -99,6 +100,7 @@ public class CommentServiceImpl implements CommentService {
             throw new AccessDeniedException("User is not the author of the ad");
         } else {
             comment.setText(commentDto.getText());
+            commentRepository.save(comment);
             CommentDto newCommentDto = commentMapper.toDto(comment);
             return newCommentDto;
         }

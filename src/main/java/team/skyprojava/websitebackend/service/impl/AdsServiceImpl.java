@@ -9,10 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
-import team.skyprojava.websitebackend.dto.AdsDto;
-import team.skyprojava.websitebackend.dto.CreateAdsDto;
-import team.skyprojava.websitebackend.dto.FullAdsDto;
-import team.skyprojava.websitebackend.dto.ResponseWrapperAdsDto;
+import team.skyprojava.websitebackend.dto.*;
 import team.skyprojava.websitebackend.entity.Ads;
 import team.skyprojava.websitebackend.entity.Comment;
 import team.skyprojava.websitebackend.entity.User;
@@ -62,8 +59,7 @@ public class AdsServiceImpl implements AdsService {
             result.setCount(adsList.size());
             result.setResults(adsDtoList);
             return result;
-        }
-        else {
+        } else {
             ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
             result.setCount(0);
             result.setResults(Collections.emptyList());
@@ -86,7 +82,7 @@ public class AdsServiceImpl implements AdsService {
     public boolean removeAds(int id, Authentication authentication) {
         logger.info("Was invoked method for delete ad by id");
         Ads ads = getAdsById(id);
-        if (!SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()))) {
+        if (!ads.getAuthor().getEmail().equals(authentication.getName()))  {
             logger.warn("No access");
             return false;
         } else {
@@ -97,6 +93,7 @@ public class AdsServiceImpl implements AdsService {
             commentRepository.deleteAllById(adsComments);
             adsImageService.removeImage(id);
             adsRepository.delete(ads);
+            adsRepository.save(ads);
             logger.info("ad deleted");
             return true;
         }
@@ -107,7 +104,7 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked method for update ad by id");
 
         Ads updatedAds = getAdsById(id);
-        if (!SecurityAccess.adsPermission(updatedAds, getUserByEmail(authentication.getName()))) {
+        if (!updatedAds.getAuthor().getEmail().equals(authentication.getName())) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not the author of the ad");
         } else {
@@ -143,8 +140,7 @@ public class AdsServiceImpl implements AdsService {
             result.setCount(adsList.size());
             result.setResults(adsDtoList);
             return result;
-        }
-        else {
+        } else {
             ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
             result.setCount(0);
             result.setResults(Collections.emptyList());
@@ -167,6 +163,7 @@ public class AdsServiceImpl implements AdsService {
         }
         throw new NotFoundException("The image hasn't been downloaded");
     }
+
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));

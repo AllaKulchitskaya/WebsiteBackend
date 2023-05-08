@@ -2,10 +2,7 @@ package team.skyprojava.websitebackend.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
-import team.skyprojava.websitebackend.dto.AdsDto;
-import team.skyprojava.websitebackend.dto.CreateAdsDto;
-import team.skyprojava.websitebackend.dto.FullAdsDto;
-import team.skyprojava.websitebackend.dto.ResponseWrapperAdsDto;
+import team.skyprojava.websitebackend.dto.*;
 
 import java.io.IOException;
 
@@ -27,8 +24,11 @@ public interface AdsService {
     FullAdsDto getFullAdsDto(int id, Authentication authentication);
 
     ResponseWrapperAdsDto getAdsMe(Authentication authentication);
+
     byte[] updateAdsImage(int id, MultipartFile image, Authentication authentication) throws IOException;
-
-
-
 }
+
+
+
+
+
