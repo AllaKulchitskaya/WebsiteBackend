@@ -38,12 +38,18 @@ public class CommentController {
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = CommentDto[].class)
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Not authorized"
                     )
             },
             tags = "Comments"
     )
     @GetMapping("/{id}/comments")
     public ResponseEntity<ResponseWrapperCommentDto> getComments(@PathVariable int id) {
+        logger.info("Request for getting ad comments");
+
         ResponseWrapperCommentDto responseWrapperCommentDto = commentService.getCommentsByAdsId(id);
         return ResponseEntity.ok(responseWrapperCommentDto);
     }
@@ -57,12 +63,20 @@ public class CommentController {
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = CommentDto.class)
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Not authorized"
                     )
             },
             tags = "Comments"
     )
     @PostMapping("/{id}/comments")
-    public ResponseEntity<CommentDto> addComment(@PathVariable int id, @RequestBody CommentDto commentDto, Authentication authentication) {
+    public ResponseEntity<CommentDto> addComment(@PathVariable int id,
+                                                 @RequestBody CommentDto commentDto,
+                                                 Authentication authentication) {
+        logger.info("Request for adding an ad comment");
+
         CommentDto newCommentDto = commentService.addComment(id, commentDto, authentication);
         return ResponseEntity.ok(newCommentDto);
     }
@@ -72,17 +86,25 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Удаленный комментарий",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = CommentDto.class)
-                            )
+                            description = "Удаленный комментарий"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Not authorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "No access"
                     )
             },
             tags = "Comments"
     )
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable int adId, @PathVariable int commentId, Authentication authentication) {
+    public ResponseEntity<Void> deleteComment(@PathVariable int adId,
+                                              @PathVariable int commentId,
+                                              Authentication authentication) {
+        logger.info("Request for deleting ad comment");
+
         commentService.removeComment(adId, commentId, authentication);
         return ResponseEntity.ok().build();
     }
@@ -96,6 +118,14 @@ public class CommentController {
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = CommentDto.class)
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Not authorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "No access"
                     )
             },
             tags = "Comments"
@@ -103,6 +133,8 @@ public class CommentController {
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable int adId, @PathVariable int commentId,
                                                     @RequestBody CommentDto commentDto, Authentication authentication) {
+        logger.info("Request for updating ad comment");
+
         CommentDto updatedCommentDto = commentService.updateComment(adId, commentId, commentDto, authentication);
         return ResponseEntity.ok(updatedCommentDto);
     }

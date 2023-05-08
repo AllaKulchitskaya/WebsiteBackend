@@ -27,7 +27,7 @@ public interface AdsService {
     FullAdsDto getFullAdsDto(int id, Authentication authentication);
 
     ResponseWrapperAdsDto getAdsMe(Authentication authentication);
-    byte[] updateAdsImage(int id, MultipartFile image);
+    byte[] updateAdsImage(int id, MultipartFile image, Authentication authentication) throws IOException;
 
 
 

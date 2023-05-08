@@ -3,22 +3,16 @@ package team.skyprojava.websitebackend.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.skyprojava.websitebackend.dto.RegisterReqDto;
-import team.skyprojava.websitebackend.dto.Role;
 import team.skyprojava.websitebackend.mapper.UserMapper;
 import team.skyprojava.websitebackend.repository.UserRepository;
 import team.skyprojava.websitebackend.security.UserDetailsServiceImpl;
 import team.skyprojava.websitebackend.service.AuthService;
 
-import javax.validation.ValidationException;
 @Transactional
 @Service
 @RequiredArgsConstructor

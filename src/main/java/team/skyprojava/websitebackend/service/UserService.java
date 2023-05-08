@@ -5,6 +5,8 @@ import org.springframework.web.multipart.MultipartFile;
 import team.skyprojava.websitebackend.dto.NewPasswordDto;
 import team.skyprojava.websitebackend.dto.UserDto;
 
+import java.io.IOException;
+
 
 public interface UserService {
 
@@ -35,5 +37,5 @@ public interface UserService {
      *
      * @param image новый аватар
      */
-    void updateUserImage(MultipartFile image, Authentication authentication);
+    void updateUserImage(MultipartFile image, Authentication authentication) throws IOException;
 }
