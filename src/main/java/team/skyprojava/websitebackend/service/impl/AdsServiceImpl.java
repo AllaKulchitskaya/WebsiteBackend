@@ -93,7 +93,6 @@ public class AdsServiceImpl implements AdsService {
             commentRepository.deleteAllById(adsComments);
             adsImageService.removeImage(id);
             adsRepository.delete(ads);
-            adsRepository.save(ads);
             logger.info("ad deleted");
             return true;
         }

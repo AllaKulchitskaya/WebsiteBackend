@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 import team.skyprojava.websitebackend.dto.CommentDto;
@@ -78,12 +79,15 @@ public class CommentServiceImpl implements CommentService {
         }
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
-        if (!SecurityAccess.commentPermission(comment, user)) {
-            logger.warn("No access");
-            return false;
+//        if (!SecurityAccess.commentPermission(comment, user)) {
+//            logger.warn("No access");
+//            return false;
+//        }
+        if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                && comment.getAuthor().getEmail().equals(authentication.getName())) {
+            throw new AccessDeniedException("User is not allowed to delete this comment");
         }
         commentRepository.delete(comment);
-        commentRepository.save(comment);
         return true;
     }
 
@@ -95,10 +99,15 @@ public class CommentServiceImpl implements CommentService {
         }
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
-        if (!SecurityAccess.commentPermission(comment, user)) {
-            logger.warn("No access");
-            throw new AccessDeniedException("User is not the author of the ad");
-        } else {
+//        if (!SecurityAccess.commentPermission(comment, user)) {
+//            logger.warn("No access");
+//            throw new AccessDeniedException("User is not the author of the ad");
+//        }
+        if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                && comment.getAuthor().getEmail().equals(authentication.getName())) {
+            throw new AccessDeniedException("User is not allowed to delete this comment");
+        }
+        else {
             comment.setText(commentDto.getText());
             commentRepository.save(comment);
             CommentDto newCommentDto = commentMapper.toDto(comment);
