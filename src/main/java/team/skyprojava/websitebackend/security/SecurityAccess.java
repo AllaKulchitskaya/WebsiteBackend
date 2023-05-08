@@ -10,21 +10,23 @@ import team.skyprojava.websitebackend.entity.User;
 @NoArgsConstructor
 public class SecurityAccess {
 
-    public static void adsPermission(Ads ads, User user) {
+    public static boolean adsPermission(Ads ads, User user) {
         SecurityUser securityUser = new SecurityUser(user);
 
         if (!securityUser.getAuthorities().contains(Role.ADMIN) &&
-                securityUser.getUsername() != ads.getAuthor().getEmail()) {
+                securityUser.getUsername().equals(ads.getAuthor().getEmail())) {
             throw new AccessDeniedException("Данное действие доступно только автору объявления и администратору");
         }
+        return true;
     }
 
-    public static void commentPermission(Comment comment, User user) {
+    public static boolean commentPermission(Comment comment, User user) {
         SecurityUser securityUser = new SecurityUser(user);
 
         if (!securityUser.getAuthorities().contains(Role.ADMIN) &&
-                securityUser.getUsername() != comment.getAuthor().getEmail()) {
+                securityUser.getUsername().equals(comment.getAuthor().getEmail())) {
             throw new AccessDeniedException("Данное действие доступно только автору комментария и администратору");
         }
+        return true;
     }
 }

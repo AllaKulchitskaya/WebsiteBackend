@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +15,6 @@ import team.skyprojava.websitebackend.entity.User;
 import team.skyprojava.websitebackend.exception.UserNotFoundException;
 import team.skyprojava.websitebackend.mapper.UserMapper;
 import team.skyprojava.websitebackend.repository.UserRepository;
-import team.skyprojava.websitebackend.security.UserDetailsServiceImpl;
 import team.skyprojava.websitebackend.service.UserImageService;
 import team.skyprojava.websitebackend.service.UserService;
 
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final UserDetailsService userDetailsService;
 
 
 
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(newPasswordDto.getNewPassword()));
             userRepository.save(user);
             logger.info("Password updated");
-            userDetailsServiceImpl.loadUserByUsername(user.getEmail());
+            userDetailsService.loadUserByUsername(user.getEmail());
         } else {
             logger.warn("The current password is incorrect");
             throw new BadCredentialsException("The current password is incorrect");

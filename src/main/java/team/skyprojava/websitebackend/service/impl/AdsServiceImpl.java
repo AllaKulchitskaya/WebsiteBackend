@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -76,9 +75,6 @@ public class AdsServiceImpl implements AdsService {
     public AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile image, Authentication authentication) throws IOException {
         logger.info("Was invoked method for create ad");
         User user = getUserByEmail(authentication.getName());
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("Only authenticated users can create an ad");
-        }
         Ads ads = adsMapper.toEntity(createAdsDto);
         ads.setAuthor(user);
         ads.setAdsImage(adsImageService.uploadImage(image));
@@ -90,12 +86,10 @@ public class AdsServiceImpl implements AdsService {
     public boolean removeAds(int id, Authentication authentication) {
         logger.info("Was invoked method for delete ad by id");
         Ads ads = getAdsById(id);
-        if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
-                && !ads.getAuthor().getEmail().equals(authentication.getName())) {
-            throw new AccessDeniedException("Only the author of the ad or an admin can delete it");
-        }
-        else if  (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
-                && ads.getAuthor().getEmail().equals(authentication.getName())) {
+        if (!SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()))) {
+            logger.warn("No access");
+            return false;
+        } else {
             List<Integer> adsComments = commentRepository.findAll().stream()
                     .filter(adsComment -> adsComment.getAds().getId() == ads.getId())
                     .map(Comment::getId)
@@ -106,7 +100,6 @@ public class AdsServiceImpl implements AdsService {
             logger.info("ad deleted");
             return true;
         }
-        return false;
     }
 
     @Override
@@ -114,16 +107,17 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked method for update ad by id");
 
         Ads updatedAds = getAdsById(id);
-        // проверяем, что пользователь является автором объявления
-        if (!updatedAds.getAuthor().getEmail().equals(authentication.getName())) {
+        if (!SecurityAccess.adsPermission(updatedAds, getUserByEmail(authentication.getName()))) {
+            logger.warn("No access");
             throw new AccessDeniedException("User is not the author of the ad");
+        } else {
+            updatedAds.setTitle(updateAdsDto.getTitle());
+            updatedAds.setDescription(updateAdsDto.getDescription());
+            updatedAds.setPrice(updateAdsDto.getPrice());
+            adsRepository.save(updatedAds);
+            logger.info("ad updated");
+            return adsMapper.toAdsDto(updatedAds);
         }
-        updatedAds.setTitle(updateAdsDto.getTitle());
-        updatedAds.setDescription(updateAdsDto.getDescription());
-        updatedAds.setPrice(updateAdsDto.getPrice());
-        adsRepository.save(updatedAds);
-        logger.info("ad updated");
-        return adsMapper.toAdsDto(updatedAds);
     }
 
     @Override
@@ -162,11 +156,14 @@ public class AdsServiceImpl implements AdsService {
     public byte[] updateAdsImage(int id, MultipartFile image, Authentication authentication) throws IOException {
         if (image != null) {
             Ads ads = getAdsById(id);
-            SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()));
-            adsImageService.removeImage(id);
-            ads.setAdsImage(adsImageService.uploadImage(image));
-            adsRepository.save(ads);
-            return ads.getAdsImage().getImage();
+            if (!SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()))) {
+                throw new AccessDeniedException("User is not the author of the ad");
+            } else {
+                adsImageService.removeImage(id);
+                ads.setAdsImage(adsImageService.uploadImage(image));
+                adsRepository.save(ads);
+                return ads.getAdsImage().getImage();
+            }
         }
         throw new NotFoundException("The image hasn't been downloaded");
     }
