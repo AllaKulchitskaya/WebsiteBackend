@@ -8,21 +8,12 @@ CREATE TABLE users
     last_name  varchar(60) NOT NULL,
     email      varchar(60) NOT NULL,
     phone      varchar(60) NOT NULL,
-    username   varchar(60) NOT NULL,
     password   varchar(60) NOT NULL,
     role       varchar(60) NOT NULL,
-    user_image_id INTEGER NOT NULL,
+    user_image_id varchar,
     PRIMARY KEY (user_id)
 );
 
 --changeset alla:2
 ALTER TABLE users
     ADD FOREIGN KEY (user_image_id) REFERENCES user_image(user_image_id);
-
---changeset alla:3
-ALTER TABLE users
-DROP COLUMN username;
-
---changeset alla:4
-ALTER TABLE users
-    ALTER COLUMN user_image_id DROP NOT NULL;
