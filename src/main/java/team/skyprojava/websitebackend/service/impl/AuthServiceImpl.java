@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.skyprojava.websitebackend.dto.RegisterReqDto;
 import team.skyprojava.websitebackend.mapper.UserMapper;
 import team.skyprojava.websitebackend.repository.UserRepository;
-import team.skyprojava.websitebackend.security.UserDetailsServiceImpl;
 import team.skyprojava.websitebackend.service.AuthService;
 
 @Transactional
@@ -19,7 +19,7 @@ import team.skyprojava.websitebackend.service.AuthService;
 public class AuthServiceImpl implements AuthService {
 
     private final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final UserDetailsService userDetailsService;
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
     public boolean login(String username, String password) {
         logger.info("Was invoked method for user authorization");
 
-            UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 logger.warn("The password is incorrect");
