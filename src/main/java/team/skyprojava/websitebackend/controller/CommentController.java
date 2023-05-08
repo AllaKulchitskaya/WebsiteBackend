@@ -83,7 +83,7 @@ public class CommentController {
     }
 
 
-    @Operation(summary = "Удаление комментариея",
+    @Operation(summary = "Удаление комментариев",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
