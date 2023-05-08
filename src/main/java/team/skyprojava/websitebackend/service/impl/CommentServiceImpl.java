@@ -3,6 +3,7 @@ package team.skyprojava.websitebackend.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -19,7 +20,6 @@ import team.skyprojava.websitebackend.repository.CommentRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
 import team.skyprojava.websitebackend.security.SecurityAccess;
 import team.skyprojava.websitebackend.service.CommentService;
-import team.skyprojava.websitebackend.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +34,6 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
     private final UserRepository userRepository;
     private final AdsRepository adsRepository;
-    UserService userService;
 
     @Override
     public ResponseWrapperCommentDto getCommentsByAdsId(int id) {
@@ -72,15 +71,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void removeComment(int adId, int commentId, Authentication authentication) {
+    public boolean removeComment(int adId, int commentId, Authentication authentication) {
         Comment comment = getCommentById(commentId);
         if (comment.getAds().getId() != adId) {
             throw new NotFoundException("The comment isn't referred to this ads");
         }
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
-        SecurityAccess.commentPermission(comment, user);
+        if (!SecurityAccess.commentPermission(comment, user)) {
+            logger.warn("No access");
+            return false;
+        }
         commentRepository.delete(comment);
+        return true;
     }
 
     @Override
@@ -91,10 +94,14 @@ public class CommentServiceImpl implements CommentService {
         }
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
-        SecurityAccess.commentPermission(comment, user);
-        comment.setText(commentDto.getText());
-        CommentDto newCommentDto = commentMapper.toDto(comment);
-        return newCommentDto;
+        if (!SecurityAccess.commentPermission(comment, user)) {
+            logger.warn("No access");
+            throw new AccessDeniedException("User is not the author of the ad");
+        } else {
+            comment.setText(commentDto.getText());
+            CommentDto newCommentDto = commentMapper.toDto(comment);
+            return newCommentDto;
+        }
     }
 
     public Comment getCommentById(int commentId) {

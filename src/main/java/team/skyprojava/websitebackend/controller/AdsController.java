@@ -56,7 +56,6 @@ public class AdsController {
         return ResponseEntity.ok(responseWrapperAdsDto);
     }
     @SneakyThrows
-    @PreAuthorize("hasAnyAuthority('USER')")
     @Operation(summary = "Создание объявления",
             responses = {
                     @ApiResponse(
@@ -105,7 +104,6 @@ public class AdsController {
     }
 
     @SneakyThrows
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @Operation(summary = "Удаление объявления",
             responses = {
                     @ApiResponse(
@@ -126,7 +124,6 @@ public class AdsController {
     }
 
     @SneakyThrows
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @Operation(summary = "Изменение объявления",
             responses = {
                     @ApiResponse(
