@@ -26,7 +26,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "user_image_id")
     private UserImage userImage;
 }

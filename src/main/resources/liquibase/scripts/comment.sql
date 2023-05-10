@@ -16,3 +16,9 @@ ALTER TABLE comment
     ADD FOREIGN KEY (user_id) REFERENCES users(user_id);
 ALTER TABLE comment
     ADD FOREIGN KEY (ads_id) REFERENCES ads(ads_id);
+
+--changeset alla:3
+alter table comment
+    alter column ads_id drop not null;
+alter table comment
+    alter column user_id drop not null;
