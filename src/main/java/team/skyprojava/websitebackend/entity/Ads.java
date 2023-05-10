@@ -22,7 +22,7 @@ public class Ads {
     private String title;
     @Column(name = "description")
     private String description;
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ads_image_id")
     private AdsImage adsImage;
 }
