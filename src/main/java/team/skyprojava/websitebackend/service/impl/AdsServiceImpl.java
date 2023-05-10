@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -84,7 +85,8 @@ public class AdsServiceImpl implements AdsService {
 
         User user = getUserByEmail(authentication.getName());
         Ads ads = getAdsById(id);
-        if (!SecurityAccess.adsPermission(ads, user)) {
+        if (!ads.getAuthor().getEmail().equals(user.getEmail())
+                || !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
             return false;
         }
@@ -109,7 +111,8 @@ public class AdsServiceImpl implements AdsService {
 
         User user = getUserByEmail(authentication.getName());
         Ads updatedAds = getAdsById(id);
-        if (!SecurityAccess.adsPermission(updatedAds, user)) {
+        if (!updatedAds.getAuthor().getEmail().equals(user.getEmail())
+                || !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to delete this comment");
         }
@@ -161,7 +164,8 @@ public class AdsServiceImpl implements AdsService {
         if (image != null) {
             User user = getUserByEmail(authentication.getName());
             Ads ads = getAdsById(id);
-            if (!SecurityAccess.adsPermission(ads, user)) {
+            if (!ads.getAuthor().getEmail().equals(user.getEmail())
+                    || !user.getRole().getAuthority().equals("ADMIN")) {
                 logger.warn("No access");
                 throw new AccessDeniedException("User is not allowed to delete this comment");
             }
