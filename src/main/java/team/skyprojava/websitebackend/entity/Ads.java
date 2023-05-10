@@ -13,7 +13,7 @@ public class Ads {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ads_id")
     private Integer id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
     @Column(name = "price")
