@@ -11,3 +11,9 @@ CREATE TABLE ads
     ads_image_id VARCHAR,
     PRIMARY KEY (ads_id)
 );
+
+--changeset alla:2
+ALTER TABLE ads
+    ADD FOREIGN KEY (user_id) REFERENCES users(user_id);
+ALTER TABLE ads
+    ADD FOREIGN KEY (ads_image_id) REFERENCES ads_image(ads_image_id);
