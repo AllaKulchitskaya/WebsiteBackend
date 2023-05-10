@@ -86,10 +86,8 @@ public class CommentServiceImpl implements CommentService {
             logger.warn("No access");
             return false;
         }
-        Ads ads = comment.getAds();
         commentRepository.delete(comment);
         logger.info("Comment deleted");
-        adsRepository.save(ads);
         return true;
     }
 
@@ -107,11 +105,9 @@ public class CommentServiceImpl implements CommentService {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to delete this comment");
         }
-        Ads ads = comment.getAds();
         comment.setText(commentDto.getText());
         commentRepository.save(comment);
         logger.info("Comment updated");
-        adsRepository.save(ads);
         CommentDto newCommentDto = commentMapper.toDto(comment);
         return newCommentDto;
     }

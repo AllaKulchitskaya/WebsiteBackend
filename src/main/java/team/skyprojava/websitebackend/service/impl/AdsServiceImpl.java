@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 import team.skyprojava.websitebackend.dto.*;
 import team.skyprojava.websitebackend.entity.Ads;
+import team.skyprojava.websitebackend.entity.AdsImage;
 import team.skyprojava.websitebackend.entity.Comment;
 import team.skyprojava.websitebackend.entity.User;
 import team.skyprojava.websitebackend.exception.AdsNotFoundException;
@@ -161,9 +162,6 @@ public class AdsServiceImpl implements AdsService {
                 logger.warn("No access");
                 throw new AccessDeniedException("User is not allowed to delete this comment");
             }
-            /*if (!SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()))) {
-                throw new AccessDeniedException("User is not the author of the ad");
-            }*/
             adsImageService.removeImage(id);
             ads.setAdsImage(adsImageService.uploadImage(image));
             adsRepository.save(ads);
