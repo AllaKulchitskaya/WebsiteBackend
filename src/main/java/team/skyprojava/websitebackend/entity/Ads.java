@@ -13,7 +13,7 @@ public class Ads {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ads_id")
     private Integer id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
     @Column(name = "price")
@@ -22,7 +22,7 @@ public class Ads {
     private String title;
     @Column(name = "description")
     private String description;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "ads_image_id")
     private AdsImage adsImage;
 }
