@@ -80,15 +80,6 @@ public class CommentServiceImpl implements CommentService {
         }
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
-        /*if (!SecurityAccess.commentPermission(comment, user)) {
-            logger.warn("No access");
-            return false;
-        }
-        if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
-                && comment.getAuthor().getEmail().equals(authentication.getName())) {
-            logger.warn("No access");
-            throw new AccessDeniedException("User is not allowed to delete this comment");
-        }*/
 
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
                 || !user.getRole().getAuthority().equals("ADMIN")) {
@@ -110,14 +101,7 @@ public class CommentServiceImpl implements CommentService {
         }
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
-        /*if (!SecurityAccess.commentPermission(comment, user)) {
-            logger.warn("No access");
-            throw new AccessDeniedException("User is not the author of the ad");
-        }
-        if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
-                && comment.getAuthor().getEmail().equals(authentication.getName())) {
-            throw new AccessDeniedException("User is not allowed to delete this comment");
-        }*/
+
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
                 || !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");

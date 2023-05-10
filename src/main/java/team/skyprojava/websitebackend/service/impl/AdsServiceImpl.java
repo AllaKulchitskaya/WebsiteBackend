@@ -89,10 +89,7 @@ public class AdsServiceImpl implements AdsService {
             logger.warn("No access");
             return false;
         }
-        /*if (!ads.getAuthor().getEmail().equals(authentication.getName()))  {
-            logger.warn("No access");
-            return false;
-        }*/
+
         List<Integer> adsComments = commentRepository.findAll().stream()
                     .filter(adsComment -> adsComment.getAds().getId() == ads.getId())
                     .map(Comment::getId)
@@ -114,10 +111,7 @@ public class AdsServiceImpl implements AdsService {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to delete this comment");
         }
-        /*if (!updatedAds.getAuthor().getEmail().equals(authentication.getName())) {
-            logger.warn("No access");
-            throw new AccessDeniedException("User is not the author of the ad");
-        }*/
+
         updatedAds.setTitle(updateAdsDto.getTitle());
         updatedAds.setDescription(updateAdsDto.getDescription());
         updatedAds.setPrice(updateAdsDto.getPrice());
