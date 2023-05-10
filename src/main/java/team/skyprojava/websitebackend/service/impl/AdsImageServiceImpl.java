@@ -50,7 +50,6 @@ public class AdsImageServiceImpl implements AdsImageService {
         if (adsImage == null) {
             throw new NotFoundException("Image is not found");
         }
-
         adsImageRepository.delete(adsImage);
     }
 

@@ -80,25 +80,14 @@ public class CommentServiceImpl implements CommentService {
         }
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
-        /*if (!SecurityAccess.commentPermission(comment, user)) {
-            logger.warn("No access");
-            return false;
-        }
-        if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
-                && comment.getAuthor().getEmail().equals(authentication.getName())) {
-            logger.warn("No access");
-            throw new AccessDeniedException("User is not allowed to delete this comment");
-        }*/
 
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
                 || !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
             return false;
         }
-        Ads ads = comment.getAds();
         commentRepository.delete(comment);
         logger.info("Comment deleted");
-        adsRepository.save(ads);
         return true;
     }
 
@@ -110,24 +99,15 @@ public class CommentServiceImpl implements CommentService {
         }
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
-        /*if (!SecurityAccess.commentPermission(comment, user)) {
-            logger.warn("No access");
-            throw new AccessDeniedException("User is not the author of the ad");
-        }
-        if (!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
-                && comment.getAuthor().getEmail().equals(authentication.getName())) {
-            throw new AccessDeniedException("User is not allowed to delete this comment");
-        }*/
+
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
                 || !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to delete this comment");
         }
-        Ads ads = comment.getAds();
         comment.setText(commentDto.getText());
         commentRepository.save(comment);
         logger.info("Comment updated");
-        adsRepository.save(ads);
         CommentDto newCommentDto = commentMapper.toDto(comment);
         return newCommentDto;
     }

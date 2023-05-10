@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 import team.skyprojava.websitebackend.dto.*;
 import team.skyprojava.websitebackend.entity.Ads;
+import team.skyprojava.websitebackend.entity.AdsImage;
 import team.skyprojava.websitebackend.entity.Comment;
 import team.skyprojava.websitebackend.entity.User;
 import team.skyprojava.websitebackend.exception.AdsNotFoundException;
@@ -85,15 +86,11 @@ public class AdsServiceImpl implements AdsService {
 
         User user = getUserByEmail(authentication.getName());
         Ads ads = getAdsById(id);
-        if (!ads.getAuthor().getEmail().equals(user.getEmail())
-                || !user.getRole().getAuthority().equals("ADMIN")) {
+        if (!ads.getAuthor().getEmail().equals(user.getEmail())) {
             logger.warn("No access");
             return false;
         }
-        /*if (!ads.getAuthor().getEmail().equals(authentication.getName()))  {
-            logger.warn("No access");
-            return false;
-        }*/
+
         List<Integer> adsComments = commentRepository.findAll().stream()
                     .filter(adsComment -> adsComment.getAds().getId() == ads.getId())
                     .map(Comment::getId)
@@ -111,15 +108,11 @@ public class AdsServiceImpl implements AdsService {
 
         User user = getUserByEmail(authentication.getName());
         Ads updatedAds = getAdsById(id);
-        if (!updatedAds.getAuthor().getEmail().equals(user.getEmail())
-                || !user.getRole().getAuthority().equals("ADMIN")) {
+        if (!updatedAds.getAuthor().getEmail().equals(user.getEmail())) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to delete this comment");
         }
-        /*if (!updatedAds.getAuthor().getEmail().equals(authentication.getName())) {
-            logger.warn("No access");
-            throw new AccessDeniedException("User is not the author of the ad");
-        }*/
+
         updatedAds.setTitle(updateAdsDto.getTitle());
         updatedAds.setDescription(updateAdsDto.getDescription());
         updatedAds.setPrice(updateAdsDto.getPrice());
@@ -169,9 +162,6 @@ public class AdsServiceImpl implements AdsService {
                 logger.warn("No access");
                 throw new AccessDeniedException("User is not allowed to delete this comment");
             }
-            /*if (!SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()))) {
-                throw new AccessDeniedException("User is not the author of the ad");
-            }*/
             adsImageService.removeImage(id);
             ads.setAdsImage(adsImageService.uploadImage(image));
             adsRepository.save(ads);
