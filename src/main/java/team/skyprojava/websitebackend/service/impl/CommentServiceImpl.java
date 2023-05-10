@@ -90,10 +90,9 @@ public class CommentServiceImpl implements CommentService {
             throw new AccessDeniedException("User is not allowed to delete this comment");
         }*/
 
-        if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                || !user.getRole().getAuthority().equals("ADMIN")) {
+        if (!SecurityAccess.commentPermission(comment, user)) {
             logger.warn("No access");
-            throw new AccessDeniedException("User is not allowed to delete this comment");
+            return false;
         }
         Ads ads = comment.getAds();
         commentRepository.delete(comment);
@@ -118,8 +117,7 @@ public class CommentServiceImpl implements CommentService {
                 && comment.getAuthor().getEmail().equals(authentication.getName())) {
             throw new AccessDeniedException("User is not allowed to delete this comment");
         }*/
-        if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                || !user.getRole().getAuthority().equals("ADMIN")) {
+        if (!SecurityAccess.commentPermission(comment, user)) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to delete this comment");
         }
