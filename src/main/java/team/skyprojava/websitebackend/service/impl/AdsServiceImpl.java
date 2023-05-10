@@ -81,39 +81,50 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public boolean removeAds(int id, Authentication authentication) {
         logger.info("Was invoked method for delete ad by id");
+
+        User user = getUserByEmail(authentication.getName());
         Ads ads = getAdsById(id);
-        if (!ads.getAuthor().getEmail().equals(authentication.getName()))  {
+        if (!ads.getAuthor().getEmail().equals(user.getEmail())
+                || !user.getRole().getAuthority().equals("ADMIN")) {
+            logger.warn("No access");
+            throw new AccessDeniedException("User is not allowed to delete this comment");
+        }
+        /*if (!ads.getAuthor().getEmail().equals(authentication.getName()))  {
             logger.warn("No access");
             return false;
-        } else {
-            List<Integer> adsComments = commentRepository.findAll().stream()
+        }*/
+        List<Integer> adsComments = commentRepository.findAll().stream()
                     .filter(adsComment -> adsComment.getAds().getId() == ads.getId())
                     .map(Comment::getId)
                     .collect(Collectors.toList());
-            commentRepository.deleteAllById(adsComments);
-            adsImageService.removeImage(id);
-            adsRepository.delete(ads);
-            logger.info("ad deleted");
-            return true;
-        }
+        commentRepository.deleteAllById(adsComments);
+        adsImageService.removeImage(id);
+        adsRepository.delete(ads);
+        logger.info("ad deleted");
+        return true;
     }
 
     @Override
     public AdsDto updateAds(int id, CreateAdsDto updateAdsDto, Authentication authentication) {
         logger.info("Was invoked method for update ad by id");
 
+        User user = getUserByEmail(authentication.getName());
         Ads updatedAds = getAdsById(id);
-        if (!updatedAds.getAuthor().getEmail().equals(authentication.getName())) {
+        if (!updatedAds.getAuthor().getEmail().equals(user.getEmail())
+                || !user.getRole().getAuthority().equals("ADMIN")) {
+            logger.warn("No access");
+            throw new AccessDeniedException("User is not allowed to delete this comment");
+        }
+        /*if (!updatedAds.getAuthor().getEmail().equals(authentication.getName())) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not the author of the ad");
-        } else {
-            updatedAds.setTitle(updateAdsDto.getTitle());
-            updatedAds.setDescription(updateAdsDto.getDescription());
-            updatedAds.setPrice(updateAdsDto.getPrice());
-            adsRepository.save(updatedAds);
-            logger.info("ad updated");
-            return adsMapper.toAdsDto(updatedAds);
-        }
+        }*/
+        updatedAds.setTitle(updateAdsDto.getTitle());
+        updatedAds.setDescription(updateAdsDto.getDescription());
+        updatedAds.setPrice(updateAdsDto.getPrice());
+        adsRepository.save(updatedAds);
+        logger.info("ad updated");
+        return adsMapper.toAdsDto(updatedAds);
     }
 
     @Override
@@ -150,15 +161,20 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public byte[] updateAdsImage(int id, MultipartFile image, Authentication authentication) throws IOException {
         if (image != null) {
+            User user = getUserByEmail(authentication.getName());
             Ads ads = getAdsById(id);
-            if (!SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()))) {
-                throw new AccessDeniedException("User is not the author of the ad");
-            } else {
-                adsImageService.removeImage(id);
-                ads.setAdsImage(adsImageService.uploadImage(image));
-                adsRepository.save(ads);
-                return ads.getAdsImage().getImage();
+            if (!ads.getAuthor().getEmail().equals(user.getEmail())
+                    || !user.getRole().getAuthority().equals("ADMIN")) {
+                logger.warn("No access");
+                throw new AccessDeniedException("User is not allowed to delete this comment");
             }
+            /*if (!SecurityAccess.adsPermission(ads, getUserByEmail(authentication.getName()))) {
+                throw new AccessDeniedException("User is not the author of the ad");
+            }*/
+            adsImageService.removeImage(id);
+            ads.setAdsImage(adsImageService.uploadImage(image));
+            adsRepository.save(ads);
+            return ads.getAdsImage().getImage();
         }
         throw new NotFoundException("The image hasn't been downloaded");
     }
