@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Класс обрабатывает команды, связанные с созданием комментариев
+ */
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -37,6 +40,12 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final AdsRepository adsRepository;
 
+    /**
+     * Метод получения комментария в объявлении по идентификатору
+     *
+     * @param id
+     * @return
+     */
     @Override
     public ResponseWrapperCommentDto getCommentsByAdsId(int id) {
         logger.info("Was invoked method for get ads comment by id");
@@ -59,8 +68,17 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
+    /**
+     * Метод добавления комментария по идентификатору
+     *
+     * @param id
+     * @param commentDto
+     * @param authentication
+     * @return
+     */
     @Override
     public CommentDto addComment(int id, CommentDto commentDto, Authentication authentication) {
+        // logger.info("Was invoked method for add comment by id");
         User user = userRepository.findByEmail(authentication.getName()).
                 orElseThrow(() -> new UserNotFoundException("User is not found"));
         Comment comment = commentMapper.toEntity(commentDto);
@@ -72,8 +90,17 @@ public class CommentServiceImpl implements CommentService {
         return newCommentDto;
     }
 
+    /**
+     * Метод удаления комментария по идентификатору
+     *
+     * @param adId
+     * @param commentId
+     * @param authentication
+     * @return
+     */
     @Override
     public boolean removeComment(int adId, int commentId, Authentication authentication) {
+        //logger.info("Was invoked method for remove comment by id");
         Comment comment = getCommentById(commentId);
         if (comment.getAds().getId() != adId) {
             throw new NotFoundException("The comment isn't referred to this ads");
@@ -91,8 +118,18 @@ public class CommentServiceImpl implements CommentService {
         return true;
     }
 
+    /**
+     * Метод обнавления комментария по идентификатору
+     *
+     * @param adId
+     * @param commentId
+     * @param commentDto
+     * @param authentication
+     * @return
+     */
     @Override
     public CommentDto updateComment(int adId, int commentId, CommentDto commentDto, Authentication authentication) {
+        //logger.info("Was invoked method for update comment by id");
         Comment comment = getCommentById(commentId);
         if (comment.getAds().getId() != adId) {
             throw new NotFoundException("The comment isn't referred to this ads");
@@ -112,7 +149,14 @@ public class CommentServiceImpl implements CommentService {
         return newCommentDto;
     }
 
+    /*
+     * Метод получения комментария по идентификатору
+     *
+     * @param commentId
+     * @return
+     */
     public Comment getCommentById(int commentId) {
+        //logger.info("Was invoked method for get comment by id");
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Comment is not found"));
     }

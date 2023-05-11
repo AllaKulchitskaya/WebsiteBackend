@@ -14,12 +14,22 @@ import team.skyprojava.websitebackend.service.AdsImageService;
 import java.io.IOException;
 import java.util.UUID;
 
+/**
+ * Класс обрабатывает команды создания рекламы, позволяющие пользователям создавать, обновлять, получать и удалять рекламу.
+ */
 @Service
 @RequiredArgsConstructor
 public class AdsImageServiceImpl implements AdsImageService {
 
     private final AdsImageRepository adsImageRepository;
     private final AdsRepository adsRepository;
+
+    /**
+     * Обновление изображения в объявлении
+     *
+     * @param image
+     * @return
+     */
     @Override
     public AdsImage uploadImage(MultipartFile image) {
         AdsImage adsImage = new AdsImage();
@@ -33,6 +43,12 @@ public class AdsImageServiceImpl implements AdsImageService {
         return adsImageRepository.save(adsImage);
     }
 
+    /**
+     * Получение изображения в объявлении по идентификатору
+     *
+     * @param adsId
+     * @return
+     */
     @Override
     public AdsImage getImageById(int adsId) {
         Ads ads = getAdsById(adsId);
@@ -43,6 +59,11 @@ public class AdsImageServiceImpl implements AdsImageService {
         return adsImage;
     }
 
+    /**
+     * Удаления изображения объявления по идентификатору
+     *
+     * @param adsId
+     */
     @Override
     public void removeImage(int adsId) {
         Ads ads = getAdsById(adsId);
@@ -53,6 +74,12 @@ public class AdsImageServiceImpl implements AdsImageService {
         adsImageRepository.delete(adsImage);
     }
 
+    /**
+     * Получение объявления по идентификатору
+     *
+     * @param id
+     * @return
+     */
     public Ads getAdsById(int id) {
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads is not found"));

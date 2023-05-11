@@ -13,6 +13,9 @@ import team.skyprojava.websitebackend.mapper.UserMapper;
 import team.skyprojava.websitebackend.repository.UserRepository;
 import team.skyprojava.websitebackend.service.AuthService;
 
+/**
+ * Предоставляет реализации методов AuthService
+ */
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,13 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-
+    /**
+     * Логин для авторизации пользователя
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     @Override
     public boolean login(String username, String password) {
         logger.info("Was invoked method for user authorization");
@@ -40,6 +49,12 @@ public class AuthServiceImpl implements AuthService {
             return true;
     }
 
+    /**
+     * Регистрация пользователя
+     *
+     * @param registerReqDto
+     * @return
+     */
     @Override
     public boolean register(RegisterReqDto registerReqDto) {
         logger.info("Was invoked method for user registration");
