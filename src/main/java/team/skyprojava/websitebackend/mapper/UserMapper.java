@@ -10,6 +10,9 @@ import team.skyprojava.websitebackend.dto.RegisterReqDto;
 import team.skyprojava.websitebackend.dto.UserDto;
 import team.skyprojava.websitebackend.entity.User;
 
+/**
+ * Предоставляет методы для маппинга User to Dto`s
+ */
 @Component
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {

@@ -10,9 +10,13 @@ import team.skyprojava.websitebackend.dto.CreateAdsDto;
 import team.skyprojava.websitebackend.dto.FullAdsDto;
 import team.skyprojava.websitebackend.entity.Ads;
 
+/**
+ * Предоставляет методы для маппинга Ads to Dto`s
+ */
 @Component
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AdsMapper{
+
     AdsMapper INSTANCE = Mappers.getMapper(AdsMapper.class);
 
     @Mapping(target = "id", source = "pk")
