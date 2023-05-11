@@ -227,6 +227,7 @@ public class AdsServiceImpl implements AdsService {
      * @return
      */
     public User getUserByEmail(String email) {
+        //logger.info("Was invoked method for get user by email");
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));
     }
 
@@ -237,6 +238,7 @@ public class AdsServiceImpl implements AdsService {
      * @return
      */
     public Ads getAdsById(int id) {
+        //logger.info("Was invoked method for get ads by id");
         return adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
     }

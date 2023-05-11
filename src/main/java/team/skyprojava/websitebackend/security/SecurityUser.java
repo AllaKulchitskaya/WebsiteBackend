@@ -10,6 +10,9 @@ import team.skyprojava.websitebackend.entity.User;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Базовый класс для работы с пользователем
+ */
 @RequiredArgsConstructor
 public class SecurityUser implements UserDetails {
     @Getter

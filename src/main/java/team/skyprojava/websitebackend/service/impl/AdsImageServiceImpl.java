@@ -32,6 +32,7 @@ public class AdsImageServiceImpl implements AdsImageService {
      */
     @Override
     public AdsImage uploadImage(MultipartFile image) {
+        // logger.info("Was invoked method for upload image");
         AdsImage adsImage = new AdsImage();
         try {
             adsImage.setImage(image.getBytes());
@@ -51,6 +52,7 @@ public class AdsImageServiceImpl implements AdsImageService {
      */
     @Override
     public AdsImage getImageById(int adsId) {
+        // logger.info("Was invoked method for get image by id");
         Ads ads = getAdsById(adsId);
         AdsImage adsImage = ads.getAdsImage();
         if (adsImage == null) {
@@ -66,6 +68,7 @@ public class AdsImageServiceImpl implements AdsImageService {
      */
     @Override
     public void removeImage(int adsId) {
+        // logger.info("Was invoked method for remove image id");
         Ads ads = getAdsById(adsId);
         AdsImage adsImage = ads.getAdsImage();
         if (adsImage == null) {
@@ -81,6 +84,7 @@ public class AdsImageServiceImpl implements AdsImageService {
      * @return
      */
     public Ads getAdsById(int id) {
+        // logger.info("Was invoked method for get ads by id");
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads is not found"));
         return ads;
