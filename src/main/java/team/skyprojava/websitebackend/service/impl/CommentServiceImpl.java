@@ -76,8 +76,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto addComment(int id, CommentDto commentDto, Authentication authentication) {
         logger.info("Was invoked method for adding comment by ad id");
-        User user = userRepository.findByEmail(authentication.getName()).
-                orElseThrow(() -> new UserNotFoundException("User is not found"));
+        User user = getUserByEmail(authentication.getName());
         Comment comment = commentMapper.toEntity(commentDto);
         comment.setAuthor(user);
         comment.setAds(adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException("Ads is not found")));
@@ -103,8 +102,7 @@ public class CommentServiceImpl implements CommentService {
             logger.warn("Comment by id {} does not belong to ad by id {}", commentId, adId);
             throw new NotFoundException("The comment isn't referred to this ads");
         }
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+        User user = getUserByEmail(authentication.getName());
 
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
                 && !user.getRole().getAuthority().equals("ADMIN")) {
@@ -134,8 +132,7 @@ public class CommentServiceImpl implements CommentService {
             throw new NotFoundException("The comment isn't referred to this ads");
         }
 
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+        User user = getUserByEmail(authentication.getName());
 
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
                 && !user.getRole().getAuthority().equals("ADMIN")) {
@@ -158,6 +155,16 @@ public class CommentServiceImpl implements CommentService {
         logger.info("Was invoked method for get comment by id");
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Comment is not found"));
+    }
+
+    /**
+     * Получение пользователя по емайлу (юзернейму)
+     *
+     * @param email
+     */
+    public User getUserByEmail(String email) {
+        logger.info("Was invoked method for getting user by email");
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));
     }
 
 
