@@ -78,8 +78,3 @@ public interface AdsService {
      */
     byte[] updateAdsImage(int id, MultipartFile image, Authentication authentication) throws IOException;
 }
-
-
-
-
-

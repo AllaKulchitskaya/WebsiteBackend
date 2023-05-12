@@ -19,8 +19,9 @@ import team.skyprojava.websitebackend.dto.LoginReqDto;
 import team.skyprojava.websitebackend.dto.RegisterReqDto;
 import team.skyprojava.websitebackend.service.AuthService;
 
-
-
+/**
+ * Класс контроллер для авторизация и регистрация
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController

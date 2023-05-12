@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * Class of Comment (advertisement comment/комментарий в объявлениях).
+ * Класс комментарий (advertisement comment/комментарий в объявлениях).
  */
 @Entity
 @Table(name = "comment")

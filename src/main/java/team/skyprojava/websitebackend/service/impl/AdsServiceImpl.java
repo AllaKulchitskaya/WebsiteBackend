@@ -242,6 +242,4 @@ public class AdsServiceImpl implements AdsService {
         return adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
     }
-
-
 }

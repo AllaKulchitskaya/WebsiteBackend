@@ -160,6 +160,4 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Comment is not found"));
     }
-
-
 }

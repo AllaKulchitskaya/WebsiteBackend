@@ -6,9 +6,9 @@ import team.skyprojava.websitebackend.entity.User;
 
 import java.util.Optional;
 
-/*
- * Repository UserRepository (users/пользователь). Везде на русском поэтому
- * Интерфейс для работы с пользователем
+/**
+ * Интерфейс для работы с пользователем (users/пользователь)
+ *
  */
 
 public interface UserRepository extends JpaRepository<User, Integer> {
@@ -21,6 +21,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
      */
     Optional<User> findByEmail(String email);
 
+    /**
+     * Хранение существущих пользователей по почте???????????
+     *
+     * @param email
+     * @return
+     */
     boolean existsByEmail(String email);
-
 }

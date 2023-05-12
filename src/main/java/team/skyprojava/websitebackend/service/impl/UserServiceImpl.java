@@ -120,5 +120,4 @@ public class UserServiceImpl implements UserService {
         //logger.info("Was invoked method for get user by email");
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));
     }
-
 }

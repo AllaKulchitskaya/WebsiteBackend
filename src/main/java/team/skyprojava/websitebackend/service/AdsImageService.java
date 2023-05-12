@@ -32,5 +32,4 @@ public interface AdsImageService {
      * @param adsId
      */
     void removeImage (int adsId);
-
 }
