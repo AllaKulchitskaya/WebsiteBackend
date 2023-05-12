@@ -7,7 +7,9 @@ import team.skyprojava.websitebackend.dto.UserDto;
 
 import java.io.IOException;
 
-
+/**
+ * Предоставляет методы для обработки пользователя
+ */
 public interface UserService {
 
     /**

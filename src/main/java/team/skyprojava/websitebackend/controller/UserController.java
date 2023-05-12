@@ -22,7 +22,9 @@ import team.skyprojava.websitebackend.dto.UserDto;
 import team.skyprojava.websitebackend.service.UserImageService;
 import team.skyprojava.websitebackend.service.UserService;
 
-
+/**
+ * Класс контроллер для пользователей
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -35,9 +37,6 @@ public class UserController {
 
     private final UserService userService;
     private final UserImageService userImageService;
-
-
-
 
     @Operation(summary = "Изменение пароля",
             responses = {
@@ -111,8 +110,6 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-
-
     @SneakyThrows
     @Operation(summary = "Обновление аватара пользователя",
             responses = {
@@ -158,6 +155,4 @@ public class UserController {
 
         return ResponseEntity.ok(userImageService.getImageById(userId).getImage());
     }
-
-
 }

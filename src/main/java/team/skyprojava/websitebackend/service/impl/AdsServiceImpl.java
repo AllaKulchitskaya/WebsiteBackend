@@ -34,8 +34,6 @@ import java.util.stream.Collectors;
 /**
  * Реализация сервиса для работы с объявлениями
  */
-
-
 @RequiredArgsConstructor
 @Service
 public class AdsServiceImpl implements AdsService {
@@ -48,6 +46,11 @@ public class AdsServiceImpl implements AdsService {
     private final AdsImageService adsImageService;
 
 
+    /**
+     * Метод для получения всех объявлений
+     *
+     * @return
+     */
     @Override
     public ResponseWrapperAdsDto getAllAds() {
         logger.info("Service for get all ads");
@@ -69,6 +72,15 @@ public class AdsServiceImpl implements AdsService {
         }
     }
 
+    /**
+     * Метод для создания объявления по идентификатору
+     *
+     * @param createAdsDto
+     * @param image
+     * @param authentication
+     * @return
+     * @throws IOException
+     */
     @Override
     public AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile image, Authentication authentication) throws IOException {
         logger.info("Was invoked method for create ad");
@@ -80,6 +92,13 @@ public class AdsServiceImpl implements AdsService {
         return adsMapper.toAdsDto(adsRepository.save(ads));
     }
 
+    /**
+     * Метод для удаления объявления по идентификатору
+     *
+     * @param id
+     * @param authentication
+     * @return
+     */
     @Override
     public boolean removeAds(int id, Authentication authentication) {
         logger.info("Was invoked method for delete ad by id");
@@ -102,6 +121,14 @@ public class AdsServiceImpl implements AdsService {
         return true;
     }
 
+    /**
+     * Метод для обновления объявления по идентификатору
+     *
+     * @param id
+     * @param updateAdsDto
+     * @param authentication
+     * @return
+     */
     @Override
     public AdsDto updateAds(int id, CreateAdsDto updateAdsDto, Authentication authentication) {
         logger.info("Was invoked method for update ad by id");
@@ -121,6 +148,13 @@ public class AdsServiceImpl implements AdsService {
         return adsMapper.toAdsDto(updatedAds);
     }
 
+    /**
+     * Метод для поиска объявлений по идентификатору
+     *
+     * @param id
+     * @param authentication
+     * @return
+     */
     @Override
     public FullAdsDto getFullAdsDto(int id, Authentication authentication) {
         logger.info("Was invoked method for get full ad dto");
@@ -129,6 +163,12 @@ public class AdsServiceImpl implements AdsService {
         return adsMapper.toDto(ads);
     }
 
+    /**
+     * Метод для просмотра всех моих объявлений
+     *
+     * @param authentication
+     * @return
+     */
     @Override
     public ResponseWrapperAdsDto getAdsMe(Authentication authentication) {
         logger.info("Service for get ads me");
@@ -152,8 +192,18 @@ public class AdsServiceImpl implements AdsService {
         }
     }
 
+    /**
+     * Метод для обновления изображения в объявлении по идентификатору
+     *
+     * @param id
+     * @param image
+     * @param authentication
+     * @return
+     * @throws IOException
+     */
     @Override
     public byte[] updateAdsImage(int id, MultipartFile image, Authentication authentication) throws IOException {
+        logger.info("Service for get ads me");
         if (image != null) {
             User user = getUserByEmail(authentication.getName());
             Ads ads = getAdsById(id);
@@ -170,15 +220,26 @@ public class AdsServiceImpl implements AdsService {
         throw new NotFoundException("The image hasn't been downloaded");
     }
 
-
+    /*
+     * Метод для получения пользователя по емайлу, нахождение пользователя по емайлу????
+     *
+     * @param email
+     * @return
+     */
     public User getUserByEmail(String email) {
+        //logger.info("Was invoked method for get user by email");
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));
     }
 
+    /*
+     * Метод для получения объявлений по идентификатору???
+     *
+     * @param id
+     * @return
+     */
     public Ads getAdsById(int id) {
+        //logger.info("Was invoked method for get ads by id");
         return adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
     }
-
-
 }

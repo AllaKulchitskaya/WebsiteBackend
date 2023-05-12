@@ -20,6 +20,10 @@ import team.skyprojava.websitebackend.service.UserService;
 
 import java.io.IOException;
 
+/**
+ * Предоставляет реализации методов UserService
+ * @see UserService
+ */
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,21 +31,35 @@ public class UserServiceImpl implements UserService {
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
+
     private final UserImageService userImageService;
 
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
+
     private final UserDetailsService userDetailsService;
 
-
-
+    /**
+     * Получение информации о пользователе
+     *
+     * @param authentication
+     * @return
+     */
     @Override
     public UserDto getUserMe(Authentication authentication) {
+        //logger.info("Was invoked method for get user");
         User user = getUserByEmail(authentication.getName());
         return userMapper.toDto(user);
     }
 
+    /**
+     * Изменение информации о пользователе
+     *
+     * @param updatedUserDto Объект пользователя с новыми данными
+     * @param authentication
+     * @return
+     */
     @Override
     public UserDto updateUser(UserDto updatedUserDto, Authentication authentication) {
         logger.info("Was invoked method for update user");
@@ -53,6 +71,12 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(user);
     }
 
+    /**
+     * Изменение пароля
+     *
+     * @param newPasswordDto  нынешний и новый пароль
+     * @param authentication
+     */
     @Override
     public void newPassword(NewPasswordDto newPasswordDto, Authentication authentication) {
         logger.info("Was invoked method for create new password");
@@ -68,8 +92,16 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Обновление аватара пользователя
+     *
+     * @param image новый аватар
+     * @param authentication
+     * @throws IOException
+     */
     @Override
     public void updateUserImage(MultipartFile image, Authentication authentication) throws IOException {
+        //logger.info("Was invoked method for update user image");
         User user = getUserByEmail(authentication.getName());
         if (user.getUserImage() != null) {
             userImageService.removeImage(user.getId());
@@ -78,8 +110,14 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    /*
+     * Получение пользователя по емайлу
+     *
+     * @param email
+     * @return
+     */
     public User getUserByEmail(String email) {
+        //logger.info("Was invoked method for get user by email");
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));
     }
-
 }
