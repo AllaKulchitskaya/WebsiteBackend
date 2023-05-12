@@ -23,7 +23,9 @@ import team.skyprojava.websitebackend.dto.*;
 import team.skyprojava.websitebackend.service.AdsImageService;
 import team.skyprojava.websitebackend.service.AdsService;
 
-
+/**
+ * Класс контроллер для объявлений
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RequiredArgsConstructor

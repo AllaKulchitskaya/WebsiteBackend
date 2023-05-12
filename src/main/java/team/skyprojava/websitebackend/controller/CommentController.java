@@ -17,6 +17,9 @@ import team.skyprojava.websitebackend.dto.CommentDto;
 import team.skyprojava.websitebackend.dto.ResponseWrapperCommentDto;
 import team.skyprojava.websitebackend.service.CommentService;
 
+/**
+ * Класс контроллер для комментариев
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController

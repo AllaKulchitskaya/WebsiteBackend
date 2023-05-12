@@ -5,6 +5,9 @@ import team.skyprojava.websitebackend.dto.Role;
 
 import javax.persistence.*;
 
+/**
+ * Класс пользователь
+ */
 @Entity
 @Table(name = "users")
 @Data

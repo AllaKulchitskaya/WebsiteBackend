@@ -5,6 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * Класс объявлений
+ */
 @Entity
 @Table(name = "ads")
 @Data
