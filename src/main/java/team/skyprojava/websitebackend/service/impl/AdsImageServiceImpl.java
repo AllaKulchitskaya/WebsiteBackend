@@ -1,6 +1,8 @@
 package team.skyprojava.websitebackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -21,6 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AdsImageServiceImpl implements AdsImageService {
 
+    private final Logger logger = LoggerFactory.getLogger(AdsImageServiceImpl.class);
     private final AdsImageRepository adsImageRepository;
     private final AdsRepository adsRepository;
 
@@ -32,7 +35,7 @@ public class AdsImageServiceImpl implements AdsImageService {
      */
     @Override
     public AdsImage uploadImage(MultipartFile image) {
-        // logger.info("Was invoked method for upload image");
+        logger.info("Was invoked method for uploading image");
         AdsImage adsImage = new AdsImage();
         try {
             adsImage.setImage(image.getBytes());
@@ -52,7 +55,7 @@ public class AdsImageServiceImpl implements AdsImageService {
      */
     @Override
     public AdsImage getImageById(int adsId) {
-        // logger.info("Was invoked method for get image by id");
+        logger.info("Was invoked method for getting image by id");
         Ads ads = getAdsById(adsId);
         AdsImage adsImage = ads.getAdsImage();
         if (adsImage == null) {
@@ -68,7 +71,7 @@ public class AdsImageServiceImpl implements AdsImageService {
      */
     @Override
     public void removeImage(int adsId) {
-        // logger.info("Was invoked method for remove image id");
+        logger.info("Was invoked method for removing image by ad id");
         Ads ads = getAdsById(adsId);
         AdsImage adsImage = ads.getAdsImage();
         if (adsImage == null) {
@@ -84,7 +87,7 @@ public class AdsImageServiceImpl implements AdsImageService {
      * @return
      */
     public Ads getAdsById(int id) {
-        // logger.info("Was invoked method for get ads by id");
+        logger.info("Was invoked method for getting ads by id");
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads is not found"));
         return ads;

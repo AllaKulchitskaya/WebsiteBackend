@@ -1,7 +1,6 @@
 package team.skyprojava.websitebackend.service;
 
 import team.skyprojava.websitebackend.dto.RegisterReqDto;
-import team.skyprojava.websitebackend.dto.Role;
 
 /**
  * Способы входа пользователя в систему и регистрации

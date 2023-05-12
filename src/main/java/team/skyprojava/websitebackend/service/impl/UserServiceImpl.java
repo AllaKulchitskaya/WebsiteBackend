@@ -48,8 +48,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDto getUserMe(Authentication authentication) {
-        //logger.info("Was invoked method for get user");
+        logger.info("Was invoked method for getting user");
         User user = getUserByEmail(authentication.getName());
+        logger.info("User has been received");
         return userMapper.toDto(user);
     }
 
@@ -62,12 +63,13 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDto updateUser(UserDto updatedUserDto, Authentication authentication) {
-        logger.info("Was invoked method for update user");
+        logger.info("Was invoked method for updating user's profile ");
         User user = getUserByEmail(authentication.getName());
         user.setFirstName(updatedUserDto.getFirstName());
         user.setLastName(updatedUserDto.getLastName());
         user.setPhone(updatedUserDto.getPhone());
         userRepository.save(user);
+        logger.info("User's profile has been updated");
         return userMapper.toDto(user);
     }
 
@@ -79,12 +81,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void newPassword(NewPasswordDto newPasswordDto, Authentication authentication) {
-        logger.info("Was invoked method for create new password");
+        logger.info("Was invoked method for creating new password");
         User user = getUserByEmail(authentication.getName());
         if (passwordEncoder.matches(newPasswordDto.getCurrentPassword(), user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPasswordDto.getNewPassword()));
             userRepository.save(user);
-            logger.info("Password updated");
+            logger.info("Password has been updated");
             userDetailsService.loadUserByUsername(user.getEmail());
         } else {
             logger.warn("The current password is incorrect");
@@ -101,23 +103,24 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void updateUserImage(MultipartFile image, Authentication authentication) throws IOException {
-        //logger.info("Was invoked method for update user image");
+        logger.info("Was invoked method for updating user image");
         User user = getUserByEmail(authentication.getName());
         if (user.getUserImage() != null) {
             userImageService.removeImage(user.getId());
         }
         user.setUserImage(userImageService.uploadImage(image));
+        logger.info("User's image has been updated");
         userRepository.save(user);
     }
 
-    /*
+    /**
      * Получение пользователя по емайлу
      *
      * @param email
      * @return
      */
     public User getUserByEmail(String email) {
-        //logger.info("Was invoked method for get user by email");
+        logger.info("Was invoked method for getting user by email");
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));
     }
 }
