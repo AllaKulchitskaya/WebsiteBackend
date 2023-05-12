@@ -31,7 +31,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
-   private final Logger logger = LoggerFactory.getLogger(CommentServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(CommentServiceImpl.class);
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
     private final UserRepository userRepository;
@@ -50,8 +50,7 @@ public class CommentServiceImpl implements CommentService {
             result.setCount(commentList.size());
             result.setResults(commentDtoList);
             return result;
-        }
-        else {
+        } else {
             ResponseWrapperCommentDto result = new ResponseWrapperCommentDto();
             result.setCount(0);
             result.setResults(Collections.emptyList());
@@ -74,15 +73,19 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public boolean removeComment(int adId, int commentId, Authentication authentication) {
-        Comment comment = getCommentById(commentId);
+        logger.info("Was invoked method for delete ads comment by adKey and id");
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("Комментарий с id " + commentId + " не найден!"));
         if (comment.getAds().getId() != adId) {
-            throw new NotFoundException("The comment isn't referred to this ads");
+            logger.warn("Comment by id {} does not belong to ad by id {} ", commentId, adId);
+            throw new NotFoundException("Комментарий с id " + commentId + "   " + adId);
         }
+
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
 
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                || !user.getRole().getAuthority().equals("ADMIN")) {
+                && !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
             return false;
         }
@@ -93,17 +96,18 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto updateComment(int adId, int commentId, CommentDto commentDto, Authentication authentication) {
-        Comment comment = getCommentById(commentId);
-        if (comment.getAds().getId() != adId) {
-            throw new NotFoundException("The comment isn't referred to this ads");
-        }
+        logger.info("Was invoked method for update ads comment by adKey and id");
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("Комментарий с id " + commentId + " не найден!"));
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
 
-        if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                || !user.getRole().getAuthority().equals("ADMIN")) {
+        if (!comment.getAuthor().getEmail().equals(user.getEmail()) &&
+                !user.getRole().getAuthority().equals("ADMIN")) {
+            if (comment.getAds().getId() != adId) {
+                logger.warn("Comment by id {} does not belong to ad by id {} ", commentId, adId);
+            }
             logger.warn("No access");
-            throw new AccessDeniedException("User is not allowed to delete this comment");
         }
         comment.setText(commentDto.getText());
         commentRepository.save(comment);

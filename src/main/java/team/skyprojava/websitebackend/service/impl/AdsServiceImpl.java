@@ -158,7 +158,7 @@ public class AdsServiceImpl implements AdsService {
             User user = getUserByEmail(authentication.getName());
             Ads ads = getAdsById(id);
             if (!ads.getAuthor().getEmail().equals(user.getEmail())
-                    || !user.getRole().getAuthority().equals("ADMIN")) {
+                    && !user.getRole().getAuthority().equals("ADMIN")) {
                 logger.warn("No access");
                 throw new AccessDeniedException("User is not allowed to delete this comment");
             }
