@@ -100,9 +100,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public boolean removeComment(int adId, int commentId, Authentication authentication) {
         logger.info("Was invoked method for remove comment by id");
-        Comment comment = getCommentById(commentId);
-        logger.info("Was invoked method for delete ads comment by adKey and id");
-        Comment comment = commentRepository.findById(commentId)
+                Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Комментарий с id " + commentId + " не найден!"));
         if (comment.getAds().getId() != adId) {
             logger.warn("Comment by id {} does not belong to ad by id {} ", commentId, adId);
@@ -132,12 +130,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentDto updateComment(int adId, int commentId, CommentDto commentDto, Authentication authentication) {
-        logger.info("Was invoked method for update comment by id");
-        Comment comment = getCommentById(commentId);
-        if (comment.getAds().getId() != adId) {
-            throw new NotFoundException("The comment isn't referred to this ads");
-        }
-        logger.info("Was invoked method for update ads comment by adKey and id");
+               logger.info("Was invoked method for update ads comment by adKey and id");
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Комментарий с id " + commentId + " не найден!"));
         User user = userRepository.findByEmail(authentication.getName())
