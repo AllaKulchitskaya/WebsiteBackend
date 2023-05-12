@@ -137,7 +137,7 @@ public class CommentServiceImpl implements CommentService {
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
                 && !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
-            throw new AccessDeniedException("User is not allowed to delete this comment");
+            throw new AccessDeniedException("User is not allowed to update this comment");
         }
         comment.setText(commentDto.getText());
         commentRepository.save(comment);

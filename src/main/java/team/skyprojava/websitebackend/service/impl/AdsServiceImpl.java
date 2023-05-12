@@ -133,7 +133,7 @@ public class AdsServiceImpl implements AdsService {
         if (!updatedAds.getAuthor().getEmail().equals(user.getEmail())
                 && !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
-            throw new AccessDeniedException("User is not allowed to delete this comment");
+            throw new AccessDeniedException("User is not allowed to update this ad");
         }
 
         updatedAds.setTitle(updateAdsDto.getTitle());
@@ -206,7 +206,7 @@ public class AdsServiceImpl implements AdsService {
             if (!ads.getAuthor().getEmail().equals(user.getEmail())
                     && !user.getRole().getAuthority().equals("ADMIN")) {
                 logger.warn("No access");
-                throw new AccessDeniedException("User is not allowed to delete this comment");
+                throw new AccessDeniedException("User is not allowed to update this ad image");
             }
             adsImageService.removeImage(id);
             ads.setAdsImage(adsImageService.uploadImage(image));
