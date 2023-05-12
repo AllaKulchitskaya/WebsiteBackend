@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 /**
- * Класс объявлений
+ * Класс сущности объявлений
  */
 @Entity
 @Table(name = "ads")

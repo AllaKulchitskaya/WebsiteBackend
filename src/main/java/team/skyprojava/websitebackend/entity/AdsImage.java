@@ -6,7 +6,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 /**
- * Класс изображение в объявлении
+ * Класс сущности изображения в объявлении
  */
 @Entity
 @Table(name = "ads_image")

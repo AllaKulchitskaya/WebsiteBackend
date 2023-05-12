@@ -17,7 +17,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Класс обрабатывает команды создания рекламы, позволяющие пользователям создавать, обновлять, получать и удалять рекламу.
+ * Реализация сервиса для работы с изображениями объявления
+ * @see AdsImageService
  */
 @Service
 @RequiredArgsConstructor
@@ -28,10 +29,9 @@ public class AdsImageServiceImpl implements AdsImageService {
     private final AdsRepository adsRepository;
 
     /**
-     * Обновление изображения в объявлении
+     * Загрузка изображения к объявлению
      *
      * @param image
-     * @return
      */
     @Override
     public AdsImage uploadImage(MultipartFile image) {
@@ -48,10 +48,9 @@ public class AdsImageServiceImpl implements AdsImageService {
     }
 
     /**
-     * Получение изображения в объявлении по идентификатору
+     * Получение изображения в объявлении по идентификатору объявления
      *
      * @param adsId
-     * @return
      */
     @Override
     public AdsImage getImageById(int adsId) {
@@ -65,7 +64,7 @@ public class AdsImageServiceImpl implements AdsImageService {
     }
 
     /**
-     * Удаления изображения объявления по идентификатору
+     * Удаления изображения объявления по идентификатору объявления
      *
      * @param adsId
      */
@@ -84,7 +83,6 @@ public class AdsImageServiceImpl implements AdsImageService {
      * Получение объявления по идентификатору
      *
      * @param id
-     * @return
      */
     public Ads getAdsById(int id) {
         logger.info("Was invoked method for getting ads by id");

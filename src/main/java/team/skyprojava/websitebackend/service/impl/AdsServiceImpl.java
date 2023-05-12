@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 /**
  * Реализация сервиса для работы с объявлениями
+ * @see AdsService
  */
 @RequiredArgsConstructor
 @Service
@@ -45,8 +46,6 @@ public class AdsServiceImpl implements AdsService {
 
     /**
      * Метод для получения всех объявлений
-     *
-     * @return
      */
     @Override
     public ResponseWrapperAdsDto getAllAds() {
@@ -72,12 +71,11 @@ public class AdsServiceImpl implements AdsService {
     }
 
     /**
-     * Метод для создания объявления по идентификатору
+     * Метод для создания нового объявления
      *
      * @param createAdsDto
      * @param image
      * @param authentication
-     * @return
      * @throws IOException
      */
     @Override
@@ -96,7 +94,6 @@ public class AdsServiceImpl implements AdsService {
      *
      * @param id
      * @param authentication
-     * @return
      */
     @Override
     public boolean removeAds(int id, Authentication authentication) {
@@ -126,7 +123,6 @@ public class AdsServiceImpl implements AdsService {
      * @param id
      * @param updateAdsDto
      * @param authentication
-     * @return
      */
     @Override
     public AdsDto updateAds(int id, CreateAdsDto updateAdsDto, Authentication authentication) {
@@ -153,7 +149,6 @@ public class AdsServiceImpl implements AdsService {
      *
      * @param id
      * @param authentication
-     * @return
      */
     @Override
     public FullAdsDto getFullAdsDto(int id, Authentication authentication) {
@@ -168,7 +163,6 @@ public class AdsServiceImpl implements AdsService {
      * Метод для просмотра всех моих объявлений
      *
      * @param authentication
-     * @return
      */
     @Override
     public ResponseWrapperAdsDto getAdsMe(Authentication authentication) {
@@ -201,7 +195,6 @@ public class AdsServiceImpl implements AdsService {
      * @param id
      * @param image
      * @param authentication
-     * @return
      * @throws IOException
      */
     @Override
@@ -225,10 +218,9 @@ public class AdsServiceImpl implements AdsService {
     }
 
     /**
-     * Метод для получения пользователя по емайлу, нахождение пользователя по емайлу????
+     * Метод для получения пользователя по почтовому адресу (юзернейму)
      *
      * @param email
-     * @return
      */
     public User getUserByEmail(String email) {
         logger.info("Was invoked method for getting user by email");
@@ -236,10 +228,9 @@ public class AdsServiceImpl implements AdsService {
     }
 
     /**
-     * Метод для получения объявлений по идентификатору???
+     * Метод для получения объявления по идентификатору
      *
      * @param id
-     * @return
      */
     public Ads getAdsById(int id) {
         logger.info("Was invoked method for getting ads by id");

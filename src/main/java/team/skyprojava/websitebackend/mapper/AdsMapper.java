@@ -11,7 +11,7 @@ import team.skyprojava.websitebackend.dto.FullAdsDto;
 import team.skyprojava.websitebackend.entity.Ads;
 
 /**
- * Предоставляет методы для маппинга Ads to Dto`s
+ * Предоставляет методы для маппинга Ads to Dto`s и наоборот
  */
 @Component
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)

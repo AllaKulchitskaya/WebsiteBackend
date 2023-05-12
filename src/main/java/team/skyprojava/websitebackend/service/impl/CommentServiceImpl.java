@@ -26,7 +26,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Класс обрабатывает команды, связанные с созданием комментариев
+ * Реализация сервиса для работы с комментариями
+ * @see CommentService
  */
 @Service
 @RequiredArgsConstructor
@@ -38,10 +39,9 @@ public class CommentServiceImpl implements CommentService {
     private final AdsRepository adsRepository;
 
     /**
-     * Метод получения комментария в объявлении по идентификатору
+     * Метод получения всех комментариев к объявлению по идентификатору объявления
      *
      * @param id
-     * @return
      */
     @Override
     public ResponseWrapperCommentDto getCommentsByAdsId(int id) {
@@ -67,12 +67,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
-     * Метод добавления комментария по идентификатору
+     * Метод добавления нового комментария по идентификатору объявления
      *
      * @param id
      * @param commentDto
      * @param authentication
-     * @return
      */
     @Override
     public CommentDto addComment(int id, CommentDto commentDto, Authentication authentication) {
@@ -95,7 +94,6 @@ public class CommentServiceImpl implements CommentService {
      * @param adId
      * @param commentId
      * @param authentication
-     * @return
      */
     @Override
     public boolean removeComment(int adId, int commentId, Authentication authentication) {
@@ -119,13 +117,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
-     * Метод обнавления комментария по идентификатору
+     * Метод обновления комментария по идентификатору
      *
      * @param adId
      * @param commentId
      * @param commentDto
      * @param authentication
-     * @return
      */
     @Override
     public CommentDto updateComment(int adId, int commentId, CommentDto commentDto, Authentication authentication) {
@@ -156,7 +153,6 @@ public class CommentServiceImpl implements CommentService {
      * Метод получения комментария по идентификатору
      *
      * @param commentId
-     * @return
      */
     public Comment getCommentById(int commentId) {
         logger.info("Was invoked method for get comment by id");

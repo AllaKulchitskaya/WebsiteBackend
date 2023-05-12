@@ -14,7 +14,8 @@ import team.skyprojava.websitebackend.repository.UserRepository;
 import team.skyprojava.websitebackend.service.AuthService;
 
 /**
- * Предоставляет реализации методов AuthService
+ * Реализация сервиса для работы с пользователями, проходящими регистрацию или авторизацию
+ * @see AuthService
  */
 @Transactional
 @Service
@@ -29,11 +30,10 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
 
     /**
-     * Логин для авторизации пользователя
+     * Метод для авторизации пользователя
      *
      * @param username
      * @param password
-     * @return
      */
     @Override
     public boolean login(String username, String password) {
@@ -53,7 +53,6 @@ public class AuthServiceImpl implements AuthService {
      * Регистрация пользователя
      *
      * @param registerReqDto
-     * @return
      */
     @Override
     public boolean register(RegisterReqDto registerReqDto) {

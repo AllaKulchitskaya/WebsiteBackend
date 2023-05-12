@@ -21,7 +21,7 @@ import team.skyprojava.websitebackend.service.UserService;
 import java.io.IOException;
 
 /**
- * Предоставляет реализации методов UserService
+ * Реализация сервиса для работы с пользователем
  * @see UserService
  */
 @RequiredArgsConstructor
@@ -41,10 +41,9 @@ public class UserServiceImpl implements UserService {
     private final UserDetailsService userDetailsService;
 
     /**
-     * Получение информации о пользователе
+     * Получение информации об авторизованном пользователе
      *
      * @param authentication
-     * @return
      */
     @Override
     public UserDto getUserMe(Authentication authentication) {
@@ -58,8 +57,7 @@ public class UserServiceImpl implements UserService {
      * Изменение информации о пользователе
      *
      * @param updatedUserDto Объект пользователя с новыми данными
-     * @param authentication
-     * @return
+     * @param authentication аутентификация
      */
     @Override
     public UserDto updateUser(UserDto updatedUserDto, Authentication authentication) {
@@ -77,7 +75,7 @@ public class UserServiceImpl implements UserService {
      * Изменение пароля
      *
      * @param newPasswordDto  нынешний и новый пароль
-     * @param authentication
+     * @param authentication аутентификация
      */
     @Override
     public void newPassword(NewPasswordDto newPasswordDto, Authentication authentication) {
@@ -98,7 +96,7 @@ public class UserServiceImpl implements UserService {
      * Обновление аватара пользователя
      *
      * @param image новый аватар
-     * @param authentication
+     * @param authentication аутентификация
      * @throws IOException
      */
     @Override
@@ -114,10 +112,9 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Получение пользователя по емайлу
+     * Получение пользователя по емайлу (юзернейму)
      *
      * @param email
-     * @return
      */
     public User getUserByEmail(String email) {
         logger.info("Was invoked method for getting user by email");

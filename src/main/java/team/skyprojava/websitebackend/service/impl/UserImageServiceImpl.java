@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Предоставляет реализации методов UserImageService
- *  @see UserImageService
+ * Реализация сервиса для работы с аватаром пользователя
+ * @see UserImageService
  */
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,6 @@ public class UserImageServiceImpl implements UserImageService {
      * Загрузка аватара пользователя
      *
      * @param image
-     * @return
      */
     @Override
     public UserImage uploadImage(MultipartFile image) {
@@ -50,10 +49,9 @@ public class UserImageServiceImpl implements UserImageService {
     }
 
     /**
-     * Получение аватара пользователя по идентификатору
+     * Получение аватара пользователя по идентификатору пользователя
      *
      * @param userId
-     * @return
      */
     @Override
     public UserImage getImageById(int userId) {
@@ -69,7 +67,7 @@ public class UserImageServiceImpl implements UserImageService {
     }
 
     /**
-     * Удаление аватара пользователя по идентификатору
+     * Удаление аватара пользователя по идентификатору пользователя
      *
      * @param userId
      */
@@ -87,10 +85,9 @@ public class UserImageServiceImpl implements UserImageService {
     }
 
     /**
-     * Получение аватара пользователя по идентификатору
+     * Получение пользователя по идентификатору
      *
      * @param id
-     * @return
      */
     public User getUserById(int id) {
         logger.info("Was invoked method for getting user by id");

@@ -9,7 +9,7 @@ import team.skyprojava.websitebackend.entity.User;
 import team.skyprojava.websitebackend.repository.UserRepository;
 
 /**
- * Класс для работы с аутентификацией пользователя
+ * Класс сервис для работы с аутентификацией пользователя
  */
 @Service
 @RequiredArgsConstructor
@@ -20,7 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * Информация о пользовательских данных для аутентификации
      *
      * @param username
-     * @return
      * @throws UsernameNotFoundException
      */
     @Override

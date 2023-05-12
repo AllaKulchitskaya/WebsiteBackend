@@ -2,30 +2,30 @@ package team.skyprojava.websitebackend.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import team.skyprojava.websitebackend.entity.User;
 
 import java.util.Optional;
 
 /**
- * Интерфейс для работы с пользователем (users/пользователь)
+ * Репозиторий для пользователей
  *
  */
 
+@Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     /**
-     * Поиск почты для пользователя
+     * Поиск пользователя по почтовому адресу (юзернейму)
      *
      * @param email
-     * @return
      */
     Optional<User> findByEmail(String email);
 
     /**
-     * Хранение существущих пользователей по почте???????????
+     * Проверка наличия пользователя по искомому почтовому адресу (юзернейму) в базе данных
      *
      * @param email
-     * @return
      */
     boolean existsByEmail(String email);
 }

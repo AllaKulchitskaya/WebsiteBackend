@@ -8,14 +8,14 @@ import team.skyprojava.websitebackend.dto.UserDto;
 import java.io.IOException;
 
 /**
- * Предоставляет методы для обработки пользователя
+ * Интерфейс сервиса для работы с пользователем
  */
 public interface UserService {
 
     /**
      * Получение информации об авторизованном пользователе
      *
-     * @return User данный пользователь
+     * @return UserDto данный пользователь
      */
     UserDto getUserMe(Authentication authentication);
 
@@ -23,7 +23,7 @@ public interface UserService {
      * Изменение пользователя
      *
      * @param userDto Объект пользователя с новыми данными
-     * @return User Изменённый пользователь
+     * @return UserDto Изменённый пользователь
      */
     UserDto updateUser(UserDto userDto, Authentication authentication);
 
@@ -31,6 +31,7 @@ public interface UserService {
      * Изменение пароля пользователя
      *
      * @param newPasswordDto  нынешний и новый пароль
+     * @param authentication аутентификация
      */
     void newPassword(NewPasswordDto newPasswordDto, Authentication authentication);
 
@@ -38,6 +39,8 @@ public interface UserService {
      * Обновление аватара пользователя
      *
      * @param image новый аватар
+     * @param authentication аутентификация
+     * @throws IOException
      */
     void updateUserImage(MultipartFile image, Authentication authentication) throws IOException;
 }

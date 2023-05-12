@@ -3,12 +3,12 @@ package team.skyprojava.websitebackend.service;
 import team.skyprojava.websitebackend.dto.RegisterReqDto;
 
 /**
- * Способы входа пользователя в систему и регистрации
+ * Интерфейс сервиса для работы с пользователями, проходящими регистрацию или авторизацию
  */
 public interface AuthService {
 
     /**
-     * Логин
+     * Метод для авторизации пользователя
      *
      * @param userName
      * @param password
@@ -17,7 +17,7 @@ public interface AuthService {
     boolean login(String userName, String password);
 
     /**
-     * Регистрация
+     * Метод для регистраций пользователя
      *
      * @param registerReqDto
      * @return the boolean

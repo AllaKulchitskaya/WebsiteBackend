@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 /**
- * Предоставляет методы для маппинга Comment to Dto`s
+ * Предоставляет методы для маппинга Comment to Dto`s и наоборот
  */
 @Component
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, imports = {LocalDateTime.class, ZoneOffset.class})
