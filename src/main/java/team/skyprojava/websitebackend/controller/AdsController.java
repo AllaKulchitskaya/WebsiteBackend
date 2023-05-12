@@ -23,7 +23,9 @@ import team.skyprojava.websitebackend.dto.*;
 import team.skyprojava.websitebackend.service.AdsImageService;
 import team.skyprojava.websitebackend.service.AdsService;
 
-
+/**
+ * Класс контроллер для объявлений
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RequiredArgsConstructor
@@ -55,6 +57,7 @@ public class AdsController {
         ResponseWrapperAdsDto responseWrapperAdsDto = adsService.getAllAds();
         return ResponseEntity.ok(responseWrapperAdsDto);
     }
+
     @SneakyThrows
     @Operation(summary = "Создание объявления",
             responses = {
@@ -144,7 +147,6 @@ public class AdsController {
                                             @RequestBody CreateAdsDto updatedAdsDto, Authentication authentication) {
         logger.info("Request for updating ad by id");
         AdsDto updateAdsDto = adsService.updateAds(id, updatedAdsDto, authentication);
-
         return ResponseEntity.ok(updateAdsDto);
     }
 
@@ -166,7 +168,6 @@ public class AdsController {
     public ResponseEntity<ResponseWrapperAdsDto> getAdsMe(Authentication authentication) {
         logger.info("Request for getting my ads");
         ResponseWrapperAdsDto responseWrapperAdsDto = adsService.getAdsMe(authentication);
-
         return ResponseEntity.ok(responseWrapperAdsDto);
     }
 
@@ -213,7 +214,6 @@ public class AdsController {
     @GetMapping(value = "/{adsId}/image", produces = {MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<byte[]> getAdsImage(@PathVariable int adsId) {
         logger.info("Request for getting image by ad id");
-
         return ResponseEntity.ok(adsImageService.getImageById(adsId).getImage());
     }
 }

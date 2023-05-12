@@ -14,14 +14,25 @@ import team.skyprojava.websitebackend.service.AdsImageService;
 import java.io.IOException;
 import java.util.UUID;
 
+/**
+ * Класс обрабатывает команды создания рекламы, позволяющие пользователям создавать, обновлять, получать и удалять рекламу.
+ */
 @Service
 @RequiredArgsConstructor
 public class AdsImageServiceImpl implements AdsImageService {
 
     private final AdsImageRepository adsImageRepository;
     private final AdsRepository adsRepository;
+
+    /**
+     * Обновление изображения в объявлении
+     *
+     * @param image
+     * @return
+     */
     @Override
     public AdsImage uploadImage(MultipartFile image) {
+        // logger.info("Was invoked method for upload image");
         AdsImage adsImage = new AdsImage();
         try {
             adsImage.setImage(image.getBytes());
@@ -33,8 +44,15 @@ public class AdsImageServiceImpl implements AdsImageService {
         return adsImageRepository.save(adsImage);
     }
 
+    /**
+     * Получение изображения в объявлении по идентификатору
+     *
+     * @param adsId
+     * @return
+     */
     @Override
     public AdsImage getImageById(int adsId) {
+        // logger.info("Was invoked method for get image by id");
         Ads ads = getAdsById(adsId);
         AdsImage adsImage = ads.getAdsImage();
         if (adsImage == null) {
@@ -43,8 +61,14 @@ public class AdsImageServiceImpl implements AdsImageService {
         return adsImage;
     }
 
+    /**
+     * Удаления изображения объявления по идентификатору
+     *
+     * @param adsId
+     */
     @Override
     public void removeImage(int adsId) {
+        // logger.info("Was invoked method for remove image id");
         Ads ads = getAdsById(adsId);
         AdsImage adsImage = ads.getAdsImage();
         if (adsImage == null) {
@@ -53,7 +77,14 @@ public class AdsImageServiceImpl implements AdsImageService {
         adsImageRepository.delete(adsImage);
     }
 
+    /**
+     * Получение объявления по идентификатору
+     *
+     * @param id
+     * @return
+     */
     public Ads getAdsById(int id) {
+        // logger.info("Was invoked method for get ads by id");
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads is not found"));
         return ads;

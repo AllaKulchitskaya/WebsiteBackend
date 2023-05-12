@@ -1,6 +1,5 @@
 package team.skyprojava.websitebackend.mapper;
 
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -12,11 +11,15 @@ import team.skyprojava.websitebackend.entity.Comment;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+/**
+ * Предоставляет методы для маппинга Comment to Dto`s
+ */
 @Component
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, imports = {LocalDateTime.class, ZoneOffset.class})
 public interface CommentMapper{
 
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
+
     @Mapping(target = "id", source = "pk")
     @Mapping(target = "author.id", source = "author")
     @Mapping(target = "ads", ignore = true)

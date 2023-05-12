@@ -2,6 +2,9 @@ package team.skyprojava.websitebackend.dto;
 
 import lombok.Data;
 
+/**
+ * Класс AdsDto для хранения объявлений
+ */
 @Data
 public class AdsDto {
     private int author;

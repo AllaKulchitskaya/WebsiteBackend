@@ -8,6 +8,9 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * Класс UserDto для хранения данных пользователя
+ */
 @Data
 public class UserDto {
     private int id;
@@ -21,5 +24,4 @@ public class UserDto {
     private String lastName;
     private String phone;
     private String image;
-
 }

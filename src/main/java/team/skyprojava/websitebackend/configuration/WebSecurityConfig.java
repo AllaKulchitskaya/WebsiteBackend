@@ -14,11 +14,13 @@ import javax.sql.DataSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/*
+ * Класс настройки авторизационного контекста
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
-
 
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
@@ -45,7 +47,6 @@ public class WebSecurityConfig {
                 .httpBasic(withDefaults());
         return http.build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
