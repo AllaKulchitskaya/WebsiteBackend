@@ -102,7 +102,7 @@ public class AdsServiceImpl implements AdsService {
         User user = getUserByEmail(authentication.getName());
         Ads ads = getAdsById(id);
         if (!ads.getAuthor().getEmail().equals(user.getEmail())
-                && !user.getRole().getAuthority().equals("ADMIN")) {
+                && !user.getRole().name().equals("ADMIN")) {
             logger.warn("No access");
             return false;
         }
@@ -131,7 +131,7 @@ public class AdsServiceImpl implements AdsService {
         User user = getUserByEmail(authentication.getName());
         Ads updatedAds = getAdsById(id);
         if (!updatedAds.getAuthor().getEmail().equals(user.getEmail())
-                && !user.getRole().getAuthority().equals("ADMIN")) {
+                && !user.getRole().name().equals("ADMIN")) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to update this ad");
         }
@@ -204,7 +204,7 @@ public class AdsServiceImpl implements AdsService {
             User user = getUserByEmail(authentication.getName());
             Ads ads = getAdsById(id);
             if (!ads.getAuthor().getEmail().equals(user.getEmail())
-                    && !user.getRole().getAuthority().equals("ADMIN")) {
+                    && !user.getRole().name().equals("ADMIN")) {
                 logger.warn("No access");
                 throw new AccessDeniedException("User is not allowed to update this ad image");
             }
