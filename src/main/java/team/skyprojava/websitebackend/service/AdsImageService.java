@@ -6,28 +6,26 @@ import team.skyprojava.websitebackend.entity.AdsImage;
 import java.io.IOException;
 
 /**
- * Предоставляет методы обработки изображений у объявления
+ * Интерфейс сервиса для работы с изображениями объявления
  */
 public interface AdsImageService {
 
     /**
-     *
+     * Метод загрузки изображения
      * @param image
-     * @return
      * @throws IOException
      */
     AdsImage uploadImage(MultipartFile image) throws IOException;
 
     /**
-     * Запрос на изображение к объявлению по идентификатору
+     * Метод получения изображения к объявлению по идентификатору объявления
      *
      * @param adsId
-     * @return
      */
     AdsImage getImageById(int adsId);
 
     /**
-     * Запрос на удаление объявления по идентификатору
+     * Метод удаления изображения по идентификатору объявления
      *
      * @param adsId
      */

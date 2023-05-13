@@ -6,13 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 import team.skyprojava.websitebackend.dto.*;
 import team.skyprojava.websitebackend.entity.Ads;
-import team.skyprojava.websitebackend.entity.AdsImage;
 import team.skyprojava.websitebackend.entity.Comment;
 import team.skyprojava.websitebackend.entity.User;
 import team.skyprojava.websitebackend.exception.AdsNotFoundException;
@@ -21,7 +19,6 @@ import team.skyprojava.websitebackend.mapper.AdsMapper;
 import team.skyprojava.websitebackend.repository.AdsRepository;
 import team.skyprojava.websitebackend.repository.CommentRepository;
 import team.skyprojava.websitebackend.repository.UserRepository;
-import team.skyprojava.websitebackend.security.SecurityAccess;
 import team.skyprojava.websitebackend.service.AdsImageService;
 import team.skyprojava.websitebackend.service.AdsService;
 
@@ -33,6 +30,7 @@ import java.util.stream.Collectors;
 
 /**
  * Реализация сервиса для работы с объявлениями
+ * @see AdsService
  */
 @RequiredArgsConstructor
 @Service
@@ -48,12 +46,10 @@ public class AdsServiceImpl implements AdsService {
 
     /**
      * Метод для получения всех объявлений
-     *
-     * @return
      */
     @Override
     public ResponseWrapperAdsDto getAllAds() {
-        logger.info("Service for get all ads");
+        logger.info("Was invoked method for getting all ads");
         List<Ads> adsList = adsRepository.findAll();
         if (!adsList.isEmpty()) {
             List<AdsDto> adsDtoList = new ArrayList<>(adsList.size());
@@ -63,32 +59,33 @@ public class AdsServiceImpl implements AdsService {
             ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
             result.setCount(adsList.size());
             result.setResults(adsDtoList);
+            logger.info("Ads have been received");
             return result;
         } else {
             ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
             result.setCount(0);
             result.setResults(Collections.emptyList());
+            logger.info("Ads have been received");
             return result;
         }
     }
 
     /**
-     * Метод для создания объявления по идентификатору
+     * Метод для создания нового объявления
      *
      * @param createAdsDto
      * @param image
      * @param authentication
-     * @return
      * @throws IOException
      */
     @Override
     public AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile image, Authentication authentication) throws IOException {
-        logger.info("Was invoked method for create ad");
+        logger.info("Was invoked method for creating an ad");
         User user = getUserByEmail(authentication.getName());
         Ads ads = adsMapper.toEntity(createAdsDto);
         ads.setAuthor(user);
         ads.setAdsImage(adsImageService.uploadImage(image));
-        logger.info("ad created");
+        logger.info("Ad has been created");
         return adsMapper.toAdsDto(adsRepository.save(ads));
     }
 
@@ -97,19 +94,18 @@ public class AdsServiceImpl implements AdsService {
      *
      * @param id
      * @param authentication
-     * @return
      */
     @Override
     public boolean removeAds(int id, Authentication authentication) {
-        logger.info("Was invoked method for delete ad by id");
+        logger.info("Was invoked method for deleting ad by id");
 
         User user = getUserByEmail(authentication.getName());
         Ads ads = getAdsById(id);
-        if (!ads.getAuthor().getEmail().equals(user.getEmail())) {
+        if (!ads.getAuthor().getEmail().equals(user.getEmail())
+                && !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
             return false;
         }
-
         List<Integer> adsComments = commentRepository.findAll().stream()
                     .filter(adsComment -> adsComment.getAds().getId() == ads.getId())
                     .map(Comment::getId)
@@ -117,7 +113,7 @@ public class AdsServiceImpl implements AdsService {
         commentRepository.deleteAllById(adsComments);
         adsImageService.removeImage(id);
         adsRepository.delete(ads);
-        logger.info("ad deleted");
+        logger.info("Ad has been deleted");
         return true;
     }
 
@@ -127,24 +123,24 @@ public class AdsServiceImpl implements AdsService {
      * @param id
      * @param updateAdsDto
      * @param authentication
-     * @return
      */
     @Override
     public AdsDto updateAds(int id, CreateAdsDto updateAdsDto, Authentication authentication) {
-        logger.info("Was invoked method for update ad by id");
+        logger.info("Was invoked method for updating ad by id");
 
         User user = getUserByEmail(authentication.getName());
         Ads updatedAds = getAdsById(id);
-        if (!updatedAds.getAuthor().getEmail().equals(user.getEmail())) {
+        if (!updatedAds.getAuthor().getEmail().equals(user.getEmail())
+                && !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
-            throw new AccessDeniedException("User is not allowed to delete this comment");
+            throw new AccessDeniedException("User is not allowed to update this ad");
         }
 
         updatedAds.setTitle(updateAdsDto.getTitle());
         updatedAds.setDescription(updateAdsDto.getDescription());
         updatedAds.setPrice(updateAdsDto.getPrice());
         adsRepository.save(updatedAds);
-        logger.info("ad updated");
+        logger.info("Ad has been updated");
         return adsMapper.toAdsDto(updatedAds);
     }
 
@@ -153,13 +149,13 @@ public class AdsServiceImpl implements AdsService {
      *
      * @param id
      * @param authentication
-     * @return
      */
     @Override
     public FullAdsDto getFullAdsDto(int id, Authentication authentication) {
-        logger.info("Was invoked method for get full ad dto");
+        logger.info("Was invoked method for getting full ad");
 
         Ads ads = getAdsById(id);
+        logger.info("Ad has been received");
         return adsMapper.toDto(ads);
     }
 
@@ -167,11 +163,10 @@ public class AdsServiceImpl implements AdsService {
      * Метод для просмотра всех моих объявлений
      *
      * @param authentication
-     * @return
      */
     @Override
     public ResponseWrapperAdsDto getAdsMe(Authentication authentication) {
-        logger.info("Service for get ads me");
+        logger.info("Was invoked method for getting my ads");
 
         User user = getUserByEmail(authentication.getName());
         List<Ads> adsList = adsRepository.findAllByAuthorId(user.getId());
@@ -183,11 +178,13 @@ public class AdsServiceImpl implements AdsService {
             ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
             result.setCount(adsList.size());
             result.setResults(adsDtoList);
+            logger.info("Ads have been received");
             return result;
         } else {
             ResponseWrapperAdsDto result = new ResponseWrapperAdsDto();
             result.setCount(0);
             result.setResults(Collections.emptyList());
+            logger.info("Ads have been received");
             return result;
         }
     }
@@ -198,47 +195,45 @@ public class AdsServiceImpl implements AdsService {
      * @param id
      * @param image
      * @param authentication
-     * @return
      * @throws IOException
      */
     @Override
     public byte[] updateAdsImage(int id, MultipartFile image, Authentication authentication) throws IOException {
-        logger.info("Service for get ads me");
+        logger.info("Was invoked method for updating ad's image");
         if (image != null) {
             User user = getUserByEmail(authentication.getName());
             Ads ads = getAdsById(id);
             if (!ads.getAuthor().getEmail().equals(user.getEmail())
-                    || !user.getRole().getAuthority().equals("ADMIN")) {
+                    && !user.getRole().getAuthority().equals("ADMIN")) {
                 logger.warn("No access");
-                throw new AccessDeniedException("User is not allowed to delete this comment");
+                throw new AccessDeniedException("User is not allowed to update this ad image");
             }
             adsImageService.removeImage(id);
             ads.setAdsImage(adsImageService.uploadImage(image));
             adsRepository.save(ads);
+            logger.info("Ad image has been updated");
             return ads.getAdsImage().getImage();
         }
         throw new NotFoundException("The image hasn't been downloaded");
     }
 
-    /*
-     * Метод для получения пользователя по емайлу, нахождение пользователя по емайлу????
+    /**
+     * Метод для получения пользователя по почтовому адресу (юзернейму)
      *
      * @param email
-     * @return
      */
     public User getUserByEmail(String email) {
-        //logger.info("Was invoked method for get user by email");
+        logger.info("Was invoked method for getting user by email");
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));
     }
 
-    /*
-     * Метод для получения объявлений по идентификатору???
+    /**
+     * Метод для получения объявления по идентификатору
      *
      * @param id
-     * @return
      */
     public Ads getAdsById(int id) {
-        //logger.info("Was invoked method for get ads by id");
+        logger.info("Was invoked method for getting ads by id");
         return adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
     }

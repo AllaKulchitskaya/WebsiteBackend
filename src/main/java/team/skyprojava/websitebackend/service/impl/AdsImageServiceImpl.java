@@ -1,6 +1,8 @@
 package team.skyprojava.websitebackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -15,24 +17,25 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Класс обрабатывает команды создания рекламы, позволяющие пользователям создавать, обновлять, получать и удалять рекламу.
+ * Реализация сервиса для работы с изображениями объявления
+ * @see AdsImageService
  */
 @Service
 @RequiredArgsConstructor
 public class AdsImageServiceImpl implements AdsImageService {
 
+    private final Logger logger = LoggerFactory.getLogger(AdsImageServiceImpl.class);
     private final AdsImageRepository adsImageRepository;
     private final AdsRepository adsRepository;
 
     /**
-     * Обновление изображения в объявлении
+     * Загрузка изображения к объявлению
      *
      * @param image
-     * @return
      */
     @Override
     public AdsImage uploadImage(MultipartFile image) {
-        // logger.info("Was invoked method for upload image");
+        logger.info("Was invoked method for uploading image");
         AdsImage adsImage = new AdsImage();
         try {
             adsImage.setImage(image.getBytes());
@@ -45,14 +48,13 @@ public class AdsImageServiceImpl implements AdsImageService {
     }
 
     /**
-     * Получение изображения в объявлении по идентификатору
+     * Получение изображения в объявлении по идентификатору объявления
      *
      * @param adsId
-     * @return
      */
     @Override
     public AdsImage getImageById(int adsId) {
-        // logger.info("Was invoked method for get image by id");
+        logger.info("Was invoked method for getting image by id");
         Ads ads = getAdsById(adsId);
         AdsImage adsImage = ads.getAdsImage();
         if (adsImage == null) {
@@ -62,13 +64,13 @@ public class AdsImageServiceImpl implements AdsImageService {
     }
 
     /**
-     * Удаления изображения объявления по идентификатору
+     * Удаления изображения объявления по идентификатору объявления
      *
      * @param adsId
      */
     @Override
     public void removeImage(int adsId) {
-        // logger.info("Was invoked method for remove image id");
+        logger.info("Was invoked method for removing image by ad id");
         Ads ads = getAdsById(adsId);
         AdsImage adsImage = ads.getAdsImage();
         if (adsImage == null) {
@@ -81,10 +83,9 @@ public class AdsImageServiceImpl implements AdsImageService {
      * Получение объявления по идентификатору
      *
      * @param id
-     * @return
      */
     public Ads getAdsById(int id) {
-        // logger.info("Was invoked method for get ads by id");
+        logger.info("Was invoked method for getting ads by id");
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Ads is not found"));
         return ads;

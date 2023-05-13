@@ -5,46 +5,42 @@ import team.skyprojava.websitebackend.dto.CommentDto;
 import team.skyprojava.websitebackend.dto.ResponseWrapperCommentDto;
 
 /**
- * Предоставляет методы обработки комментариев
+ * Интерфейс сервиса для работы с комментариями
  */
 public interface CommentService {
 
     /**
-     * Запрос для просмотра комментариев по идентификатору пользователя
+     * Метод для просмотра всех комментариев по идентификатору объявления
      *
      * @param id
-     * @return
      */
     ResponseWrapperCommentDto getCommentsByAdsId(int id);
 
     /**
-     * Запрос на добавление комментария пользователя
+     * Метод добавления нового комментария пользователем
      *
      * @param id
      * @param commentDto
      * @param authentication
-     * @return
      */
     CommentDto addComment(int id, CommentDto commentDto, Authentication authentication);
 
     /**
-     * Запрос на удаление комментария пользователя
+     * Метод удаления комментария пользователя
      *
      * @param adId
      * @param commentId
      * @param authentication
-     * @return
      */
     boolean removeComment(int adId, int commentId, Authentication authentication);
 
     /**
-     * Запрос на обновление комментария пользователя
+     * Метод обновления комментария пользователя
      *
      * @param adId
      * @param commentId
      * @param commentDto
      * @param authentication
-     * @return
      */
     CommentDto updateComment(int adId, int commentId, CommentDto commentDto, Authentication authentication);
 }

@@ -1,20 +1,21 @@
 package team.skyprojava.websitebackend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import team.skyprojava.websitebackend.entity.Ads;
 
 import java.util.List;
 
 /**
- * Интерфейс для работы с объявлениями
+ * Репозиторий для объявлений
  */
+@Repository
 public interface AdsRepository extends JpaRepository<Ads, Integer> {
 
     /**
      * Поиск всех авторов по идентификатору
      *
      * @param id
-     * @return
      */
     List<Ads> findAllByAuthorId(Integer id);
 }

@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Класс для работы с пользователем, связанное с авторизацией
+ * Класс для сбора информации об авторизованном пользователе
  */
 @RequiredArgsConstructor
 public class SecurityUser implements UserDetails {

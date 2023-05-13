@@ -3,10 +3,9 @@ package team.skyprojava.websitebackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
- * Класс объявлений
+ * Класс сущности объявлений
  */
 @Entity
 @Table(name = "ads")

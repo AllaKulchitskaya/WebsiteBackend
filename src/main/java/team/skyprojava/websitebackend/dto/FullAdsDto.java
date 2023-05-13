@@ -3,7 +3,7 @@ package team.skyprojava.websitebackend.dto;
 import lombok.Data;
 
 /**
- * Класс FullAdsDto для хранения данных по поиску всех объявлений пользователя
+ * Класс FullAdsDto для хранения полных данных объявлений
  */
 @Data
 public class FullAdsDto {

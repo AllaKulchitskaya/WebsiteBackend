@@ -26,7 +26,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Класс обрабатывает команды, связанные с созданием комментариев
+ * Реализация сервиса для работы с комментариями
+ * @see CommentService
  */
 @Service
 @RequiredArgsConstructor
@@ -38,14 +39,13 @@ public class CommentServiceImpl implements CommentService {
     private final AdsRepository adsRepository;
 
     /**
-     * Метод получения комментария в объявлении по идентификатору
+     * Метод получения всех комментариев к объявлению по идентификатору объявления
      *
      * @param id
-     * @return
      */
     @Override
     public ResponseWrapperCommentDto getCommentsByAdsId(int id) {
-        logger.info("Was invoked method for get ads comment by id");
+        logger.info("Was invoked method for getting ad comments by ad id");
         List<Comment> commentList = commentRepository.findAllByAdsId(id);
         if (!commentList.isEmpty()) {
             List<CommentDto> commentDtoList = new ArrayList<>(commentList.size());
@@ -55,35 +55,35 @@ public class CommentServiceImpl implements CommentService {
             ResponseWrapperCommentDto result = new ResponseWrapperCommentDto();
             result.setCount(commentList.size());
             result.setResults(commentDtoList);
+            logger.info("Comments have been received");
             return result;
-        }
-        else {
+        } else {
             ResponseWrapperCommentDto result = new ResponseWrapperCommentDto();
             result.setCount(0);
             result.setResults(Collections.emptyList());
+            logger.info("Comments have been received");
             return result;
         }
     }
 
     /**
-     * Метод добавления комментария по идентификатору
+     * Метод добавления нового комментария по идентификатору объявления
      *
      * @param id
      * @param commentDto
      * @param authentication
-     * @return
      */
     @Override
     public CommentDto addComment(int id, CommentDto commentDto, Authentication authentication) {
-        // logger.info("Was invoked method for add comment by id");
-        User user = userRepository.findByEmail(authentication.getName()).
-                orElseThrow(() -> new UserNotFoundException("User is not found"));
+        logger.info("Was invoked method for adding comment by ad id");
+        User user = getUserByEmail(authentication.getName());
         Comment comment = commentMapper.toEntity(commentDto);
         comment.setAuthor(user);
         comment.setAds(adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException("Ads is not found")));
         comment.setCreatedAt(LocalDateTime.now());
         commentRepository.save(comment);
         CommentDto newCommentDto = commentMapper.toDto(comment);
+        logger.info("Comment has been added");
         return newCommentDto;
     }
 
@@ -93,68 +93,79 @@ public class CommentServiceImpl implements CommentService {
      * @param adId
      * @param commentId
      * @param authentication
-     * @return
      */
     @Override
     public boolean removeComment(int adId, int commentId, Authentication authentication) {
-        //logger.info("Was invoked method for remove comment by id");
+        logger.info("Was invoked method for removing comment by id");
         Comment comment = getCommentById(commentId);
         if (comment.getAds().getId() != adId) {
+            logger.warn("Comment by id {} does not belong to ad by id {}", commentId, adId);
             throw new NotFoundException("The comment isn't referred to this ads");
         }
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+        User user = getUserByEmail(authentication.getName());
 
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                || !user.getRole().getAuthority().equals("ADMIN")) {
+                && !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
             return false;
         }
         commentRepository.delete(comment);
-        logger.info("Comment deleted");
+        logger.info("Comment has been deleted");
         return true;
     }
 
     /**
-     * Метод обнавления комментария по идентификатору
+     * Метод обновления комментария по идентификатору
      *
      * @param adId
      * @param commentId
      * @param commentDto
      * @param authentication
-     * @return
      */
     @Override
     public CommentDto updateComment(int adId, int commentId, CommentDto commentDto, Authentication authentication) {
-        //logger.info("Was invoked method for update comment by id");
+        logger.info("Was invoked method for updating ad comment by id");
         Comment comment = getCommentById(commentId);
+
         if (comment.getAds().getId() != adId) {
+            logger.warn("Comment by id {} does not belong to ad by id {}", commentId, adId);
             throw new NotFoundException("The comment isn't referred to this ads");
         }
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+
+        User user = getUserByEmail(authentication.getName());
 
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                || !user.getRole().getAuthority().equals("ADMIN")) {
+                && !user.getRole().getAuthority().equals("ADMIN")) {
             logger.warn("No access");
-            throw new AccessDeniedException("User is not allowed to delete this comment");
+            throw new AccessDeniedException("User is not allowed to update this comment");
         }
         comment.setText(commentDto.getText());
         commentRepository.save(comment);
-        logger.info("Comment updated");
+        logger.info("Comment has been updated");
         CommentDto newCommentDto = commentMapper.toDto(comment);
         return newCommentDto;
     }
 
-    /*
+    /**
      * Метод получения комментария по идентификатору
      *
      * @param commentId
-     * @return
      */
     public Comment getCommentById(int commentId) {
-        //logger.info("Was invoked method for get comment by id");
+        logger.info("Was invoked method for get comment by id");
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Comment is not found"));
     }
+
+    /**
+     * Получение пользователя по емайлу (юзернейму)
+     *
+     * @param email
+     */
+    public User getUserByEmail(String email) {
+        logger.info("Was invoked method for getting user by email");
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));
+    }
+
+
 }

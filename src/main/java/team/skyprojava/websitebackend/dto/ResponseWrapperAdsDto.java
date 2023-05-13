@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * Класс ResponseWrapperAdsDto для хранения данных обертки объявления
+ * Класс ResponseWrapperAdsDto для хранения списка объявлений
  */
 @Data
 public class ResponseWrapperAdsDto {

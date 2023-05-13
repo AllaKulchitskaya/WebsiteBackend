@@ -6,7 +6,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 /**
- * Класс аватарка пользователя
+ * Класс сущности аватара пользователя
  */
 @Entity
 @Table(name = "user_image")

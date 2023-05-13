@@ -6,21 +6,20 @@ import team.skyprojava.websitebackend.entity.UserImage;
 import java.io.IOException;
 
 /**
- * Предоставляет методы обработки изображений у пользователя
+ * Интерфейс сервиса для работы с аватаром пользователя
  */
 public interface UserImageService {
 
     /**
-     * Запрос на обновление аватара пользователя
+     * Метод загрузки изображения пользователя
      *
      * @param image
-     * @return
      * @throws IOException
      */
     UserImage uploadImage(MultipartFile image) throws IOException;
 
     /**
-     * Запрос на получение изображения по идентификатору пользователя
+     * Метод получения изображения по идентификатору пользователя
      *
      * @param userId
      * @return
@@ -28,7 +27,7 @@ public interface UserImageService {
     UserImage getImageById(int userId);
 
     /**
-     * Удаление изображение по идентификатору пользовотеля
+     * Метод удаления изображения по идентификатору пользовотеля
      *
      * @param userId
      */
