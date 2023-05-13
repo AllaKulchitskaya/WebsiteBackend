@@ -147,7 +147,7 @@ public class UserController {
                             )
                     )
             },
-            tags = "AdsImage"
+            tags = "UserImage"
     )
     @GetMapping(value = "/{userId}/image", produces = {MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<byte[]> getUserImage(@PathVariable int userId) {
