@@ -105,7 +105,7 @@ public class CommentServiceImpl implements CommentService {
         User user = getUserByEmail(authentication.getName());
 
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                && !user.getRole().getAuthority().equals("ADMIN")) {
+                && !user.getRole().name().equals("ADMIN")) {
             logger.warn("No access");
             return false;
         }
@@ -135,7 +135,7 @@ public class CommentServiceImpl implements CommentService {
         User user = getUserByEmail(authentication.getName());
 
         if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                && !user.getRole().getAuthority().equals("ADMIN")) {
+                && !user.getRole().name().equals("ADMIN")) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to update this comment");
         }
