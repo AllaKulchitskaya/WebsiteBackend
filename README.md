@@ -12,7 +12,7 @@ The project has to meet the following requirements:
 - Uploading and saving ads' images (the task of increased complexity).
 
 ## Requirements specification:
-- [Technical specification](https://skyengpublic.notion.site/4509dd17f5f840f1ba6807fe83aa9c15)
+- [Technical specification](https://skyengpublic.notion.site/64113e0a2641475c9ad9bea93144afff)
 
 
 ## The developers involved in the project:
