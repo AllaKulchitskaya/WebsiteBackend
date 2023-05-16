@@ -104,11 +104,11 @@ public class CommentServiceImpl implements CommentService {
         }
         User user = getUserByEmail(authentication.getName());
 
-        if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                && !user.getRole().name().equals("ADMIN")) {
+        if (!commentsPermission(user, comment)) {
             logger.warn("No access");
             return false;
         }
+
         commentRepository.delete(comment);
         logger.info("Comment has been deleted");
         return true;
@@ -134,11 +134,11 @@ public class CommentServiceImpl implements CommentService {
 
         User user = getUserByEmail(authentication.getName());
 
-        if (!comment.getAuthor().getEmail().equals(user.getEmail())
-                && !user.getRole().name().equals("ADMIN")) {
+        if (!commentsPermission(user, comment)) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to update this comment");
         }
+
         comment.setText(commentDto.getText());
         commentRepository.save(comment);
         logger.info("Comment has been updated");
@@ -167,5 +167,17 @@ public class CommentServiceImpl implements CommentService {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User is not found"));
     }
 
-
+    /**
+     * Метод проверяет, доступно ли пользователю изменение и удаление комментариев
+     *
+     * @param user
+     * @param comment
+     */
+    public boolean commentsPermission(User user, Comment comment) {
+        if (!comment.getAuthor().getEmail().equals(user.getEmail())
+                && !user.getRole().name().equals("ADMIN")) {
+            return false;
+        }
+        return true;
+    }
 }

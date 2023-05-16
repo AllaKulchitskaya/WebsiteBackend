@@ -101,11 +101,12 @@ public class AdsServiceImpl implements AdsService {
 
         User user = getUserByEmail(authentication.getName());
         Ads ads = getAdsById(id);
-        if (!ads.getAuthor().getEmail().equals(user.getEmail())
-                && !user.getRole().name().equals("ADMIN")) {
+
+        if (!adsPermission(user, ads)) {
             logger.warn("No access");
             return false;
         }
+
         List<Integer> adsComments = commentRepository.findAll().stream()
                     .filter(adsComment -> adsComment.getAds().getId() == ads.getId())
                     .map(Comment::getId)
@@ -130,8 +131,8 @@ public class AdsServiceImpl implements AdsService {
 
         User user = getUserByEmail(authentication.getName());
         Ads updatedAds = getAdsById(id);
-        if (!updatedAds.getAuthor().getEmail().equals(user.getEmail())
-                && !user.getRole().name().equals("ADMIN")) {
+
+        if (!adsPermission(user, updatedAds)) {
             logger.warn("No access");
             throw new AccessDeniedException("User is not allowed to update this ad");
         }
@@ -203,11 +204,12 @@ public class AdsServiceImpl implements AdsService {
         if (image != null) {
             User user = getUserByEmail(authentication.getName());
             Ads ads = getAdsById(id);
-            if (!ads.getAuthor().getEmail().equals(user.getEmail())
-                    && !user.getRole().name().equals("ADMIN")) {
+
+            if (!adsPermission(user, ads)) {
                 logger.warn("No access");
                 throw new AccessDeniedException("User is not allowed to update this ad image");
             }
+
             adsImageService.removeImage(id);
             ads.setAdsImage(adsImageService.uploadImage(image));
             adsRepository.save(ads);
@@ -236,5 +238,19 @@ public class AdsServiceImpl implements AdsService {
         logger.info("Was invoked method for getting ads by id");
         return adsRepository.findById(id)
                 .orElseThrow(() -> new AdsNotFoundException("Объявление с id " + id + " не найдено!"));
+    }
+
+    /**
+     * Метод проверяет, доступно ли пользователю изменение и удаление объявлений
+     *
+     * @param user
+     * @param ads
+     */
+    public boolean adsPermission(User user, Ads ads) {
+        if (!ads.getAuthor().getEmail().equals(user.getEmail())
+                && !user.getRole().name().equals("ADMIN")) {
+            return false;
+        }
+        return true;
     }
 }
